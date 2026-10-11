@@ -1107,6 +1107,21 @@
           var skills      = v('tpSkills').trim();
           var fileEl      = document.getElementById('tpResume');
 
+          // Show chosen filename + highlight zone
+if (fileEl) {
+  fileEl.addEventListener('change', function () {
+    var zone = document.getElementById('tpUploadZone');
+    var name = document.getElementById('tpUploadFileName');
+    if (fileEl.files && fileEl.files.length) {
+      if (name) name.textContent = '✓ ' + fileEl.files[0].name;
+      if (zone) zone.classList.add('filled');
+    } else {
+      if (name) name.textContent = '';
+      if (zone) zone.classList.remove('filled');
+    }
+  });
+}
+
           if (!name || name.length < 2) return toast('Please enter your full name.');
           if (!validEmail(email)) return toast('Please enter a valid email.');
           if (!validPhone(phone)) return toast('Enter a valid 10-digit Indian mobile number.');
