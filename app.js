@@ -604,7 +604,7 @@ const IndexPage = {
     if (this.el.skeleton) this.el.skeleton.hidden = true;
   },
 
-  populateFilters: function () {
+   populateFilters: function () {
     const locSet = {};
     const catSet = {};
     const compSet = {};
@@ -644,8 +644,99 @@ const IndexPage = {
       opt.textContent = c + " (" + compSet[c] + ")";
       this.el.filterCompany.appendChild(opt);
     }, this);
+
+    // NEW: Auto-generate popular tags from live data
+    this.renderPopularTags();
   },
 
+  /**
+   * Auto-detect the top 7 keywords from live jobs and render as Popular tags.
+   * Only shows tags that have at least 1 matching job — no dead buttons.
+   */
+  renderPopularTags: function () {
+    const container = this.el.popularTags;
+    if (!container) return;
+
+    // 1. Score every word across all jobs
+    const wordCount = {};
+    const stopWords = {
+      "and":"1","or":"1","the":"1","a":"1","an":"1","of":"1","for":"1","to":"1",
+      "in":"1","on":"1","at":"1","by":"1","with":"1","as":"1","is":"1","are":"1",
+      "be":"1","this":"1","that":"1","it":"1","its":"1","will":"1","can":"1",
+      "must":"1","should":"1","able":"1","work":"1","working":"1","years":"1",
+      "year":"1","experience":"1","candidate":"1","role":"1","job":"1","new":"1",
+      "all":"1","any":"1","other":"1","than":"1","have":"1","has":"1","more":"1",
+      "their":"1","also":"1","well":"1","good":"1","strong":"1","key":"1"
+    };
+
+    const addWords = function (text, weight) {
+      if (!text) return;
+      String(text).toLowerCase()
+        .replace(/[^\w\s&+#.]/g, " ")
+        .split(/\s+/)
+        .forEach(function (w) {
+          w = w.trim();
+          if (!w || w.length < 2) return;
+          if (stopWords[w]) return;
+          if (/^\d+$/.test(w)) return; // skip pure numbers
+          wordCount[w] = (wordCount[w] || 0) + (weight || 1);
+        });
+    };
+
+    // 2. Score from categories (weight 5), skills (weight 3), titles (weight 2)
+    STATE.jobs.forEach(function (j) {
+      addWords(j.category, 5);
+      if (j.skills && j.skills.length) {
+        j.skills.forEach(function (s) { addWords(s, 3); });
+      }
+      addWords(j.title, 2);
+    });
+
+    // 3. Pick top 7 words that actually match at least 1 live job
+    const self = this;
+    const candidates = Object.keys(wordCount)
+      .sort(function (a, b) { return wordCount[b] - wordCount[a]; })
+      .filter(function (word) {
+        // Double-check the word returns results
+        return STATE.jobs.some(function (j) {
+          const hay = [
+            j.title, j.category, j.industry, j.description,
+            (j.skills || []).join(" ")
+          ].join(" ").toLowerCase();
+          return hay.indexOf(word) !== -1;
+        });
+      })
+      .slice(0, 7);
+
+    if (!candidates.length) {
+      container.style.display = "none";
+      return;
+    }
+
+    // 4. Render the tags
+    const label = container.querySelector(".popular-label");
+    container.innerHTML = "";
+    if (label) container.appendChild(label);
+
+    candidates.forEach(function (word) {
+      const btn = document.createElement("button");
+      btn.className = "popular-tag";
+      btn.setAttribute("data-q", word);
+      btn.textContent = self.capitalize(word);
+      btn.addEventListener("click", function () {
+        if (self.el.search) self.el.search.value = word;
+        if (self.el.filterSearch) self.el.filterSearch.value = word;
+        self.state.updateFilters();
+        const jobsEl = document.getElementById("jobs");
+        if (jobsEl) jobsEl.scrollIntoView({ behavior: "smooth" });
+      });
+      container.appendChild(btn);
+    });
+  },
+
+  capitalize: function (s) {
+    return String(s || "").replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+  },
   updateStats: function () {
     const clients = {};
     const cities = {};
