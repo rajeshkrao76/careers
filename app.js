@@ -145,11 +145,52 @@ const Store = {
    ========================================================================== */
 const API = {
   /**
+   * Normalize a job object from the API.
+   * Apps Script returns some fields as strings (skills, benefits, "Yes"/"No")
+   * but the frontend expects arrays and booleans.
+   */
+  normalizeJob: function (j) {
+    if (!j) return j;
+
+    // skills → array
+    if (!Array.isArray(j.skills)) {
+      j.skills = String(j.skills || "")
+        .split(",")
+        .map(function (s) { return s.trim(); })
+        .filter(Boolean);
+    }
+
+    // benefits → array
+    if (!Array.isArray(j.benefits)) {
+      j.benefits = String(j.benefits || "")
+        .split(",")
+        .map(function (s) { return s.trim(); })
+        .filter(Boolean);
+    }
+
+    // boolean flags
+    const isYes = function (v) {
+      if (v === true) return true;
+      const s = String(v || "").toLowerCase().trim();
+      return s === "yes" || s === "true";
+    };
+    j.isUrgent = isYes(j.isUrgent);
+    j.isFeatured = isYes(j.isFeatured);
+    j.isRemote = isYes(j.isRemote);
+
+    return j;
+  },
+
+  /**
    * Fetch all active jobs.
    */
   getJobs: function () {
     return fetch(API_URL + "?action=jobs")
       .then(function (r) { return r.json(); })
+      .then(function (jobs) {
+        if (Array.isArray(jobs)) return jobs.map(API.normalizeJob);
+        return jobs;
+      })
       .catch(function (err) {
         console.error("API.getJobs failed:", err);
         throw err;
@@ -162,6 +203,7 @@ const API = {
   getJob: function (jobId) {
     return fetch(API_URL + "?action=job&id=" + encodeURIComponent(jobId))
       .then(function (r) { return r.json(); })
+      .then(function (job) { return API.normalizeJob(job); })
       .catch(function (err) {
         console.error("API.getJob failed:", err);
         throw err;
