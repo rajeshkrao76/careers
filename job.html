@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1A365D">
+
+  <!-- ============ Dynamic SEO (populated by JS) ============ -->
+  <title id="pageTitle">Job Details — Raveone Careers</title>
+  <meta id="metaDescription" name="description" content="View full job details, responsibilities, requirements, and apply in 60 seconds.">
+  <meta id="metaKeywords" name="keywords" content="jobs, careers, hiring, Raveone">
+  <link id="canonicalLink" rel="canonical" href="https://careers.raveone.in/job.html">
+
+  <!-- ============ Open Graph (populated by JS) ============ -->
+  <meta id="ogTitle" property="og:type" content="article">
+  <meta id="ogTitleMeta" property="og:title" content="Job Details — Raveone Careers">
+  <meta id="ogDescription" property="og:description" content="Apply in 60 seconds. Verified role from MSME hiring partner.">
+  <meta id="ogUrl" property="og:url" content="https://careers.raveone.in/job.html">
+  <meta property="og:site_name" content="Raveone Careers">
+  <meta id="ogImage" property="og:image" content="https://careers.raveone.in/assets/og-image.png">
+
+  <!-- ============ Twitter ============ -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta id="twTitle" name="twitter:title" content="Job Details — Raveone Careers">
+  <meta id="twDescription" name="twitter:description" content="Apply in 60 seconds. Verified role.">
+  <meta id="twImage" name="twitter:image" content="https://careers.raveone.in/assets/og-image.png">
+
+  <!-- ============ Favicon ============ -->
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="apple-touch-icon" href="assets/logo-192.png">
+
+  <!-- ============ Fonts ============ -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
+
+  <!-- ============ Styles ============ -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- ============ Critical above-fold ============ -->
+  <style>
+    body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background: #F8FAFC; color: #1E293B; -webkit-font-smoothing: antialiased; }
+    #jobSchemaContainer { display: none; }
+    .loading-shimmer { background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+  </style>
+
+  <!-- ============ Google Jobs Schema injected here at runtime ============ -->
+  <div id="jobSchemaContainer"></div>
+</head>
+
+<body>
+
+<!-- ==========================================================================
+     HEADER (same as index.html)
+     ========================================================================== -->
+<header class="site-header" id="siteHeader">
+  <div class="container header-inner">
+
+    <a href="index.html" class="brand" aria-label="Raveone Careers — Home">
+      <span class="brand-mark" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white"
+             stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/>
+        </svg>
+      </span>
+      <span class="brand-text">
+        <span class="brand-title">Raveone Careers</span>
+        <span class="brand-sub">Executive Search &amp; Selection</span>
+      </span>
+    </a>
+
+    <nav class="main-nav" id="mainNav" aria-label="Main navigation">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="index.html#jobs" class="nav-link active">Job Vacancies</a>
+      <a href="pages.html?page=employers" class="nav-link">Employers (MSME)</a>
+      <a href="pages.html?page=submit-cv" class="nav-link">Submit CV</a>
+      <a href="pages.html?page=about" class="nav-link">About Us</a>
+      <a href="pages.html?page=process" class="nav-link">Our Process</a>
+      <a href="pages.html?page=blog" class="nav-link">Blog</a>
+      <a href="pages.html?page=contact" class="nav-link">Contact Us</a>
+    </nav>
+
+    <div class="header-actions">
+      <a href="https://www.raveone.in" target="_blank" rel="noopener" class="btn-ghost">
+        www.raveone.in
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M7 17L17 7M17 7H8M17 7v9"/>
+        </svg>
+      </a>
+      <button class="mobile-toggle" id="mobileToggle" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+  </div>
+</header>
+
+<!-- ==========================================================================
+     BREADCRUMB
+     ========================================================================== -->
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <div class="container breadcrumb-inner">
+    <a href="index.html">Home</a>
+    <span aria-hidden="true">/</span>
+    <a href="index.html#jobs">Job Vacancies</a>
+    <span aria-hidden="true">/</span>
+    <span id="crumbCurrent" class="breadcrumb-current">Job</span>
+  </div>
+</nav>
+
+<!-- ==========================================================================
+     MAIN CONTENT
+     ========================================================================== -->
+<main class="job-detail" id="jobDetail">
+
+  <!-- ---------- LOADING SKELETON ---------- -->
+  <div class="container" id="jobLoading">
+    <div class="loading-header loading-shimmer"></div>
+    <div class="loading-meta loading-shimmer"></div>
+    <div class="loading-body loading-shimmer"></div>
+    <div class="loading-body loading-shimmer"></div>
+    <div class="loading-body loading-shimmer"></div>
+  </div>
+
+  <!-- ---------- ERROR STATE ---------- -->
+  <div class="container" id="jobError" hidden>
+    <div class="error-card">
+      <div class="error-icon">⚠️</div>
+      <h2 class="error-title">Job not found</h2>
+      <p class="error-text" id="errorMessage">This job may have been filled or removed.</p>
+      <a href="index.html#jobs" class="btn-primary">Browse all open jobs</a>
+    </div>
+  </div>
+
+  <!-- ---------- REAL CONTENT ---------- -->
+  <div class="container job-grid" id="jobContent" hidden>
+
+    <!-- ============ LEFT: JOB INFO ============ -->
+    <article class="job-main">
+
+      <!-- Hero card -->
+      <header class="job-hero">
+        <div class="job-hero-bg" aria-hidden="true"></div>
+        <div class="job-hero-content">
+
+          <div class="job-chips">
+            <span class="chip chip-navy" id="jobIdChip">—</span>
+            <span class="chip chip-green" id="jobTypeChip">Full-Time</span>
+            <span class="chip chip-amber" id="jobUrgentChip" hidden>🔥 Urgent</span>
+            <span class="chip chip-blue" id="jobPositionsChip" hidden>— openings</span>
+            <span class="chip chip-purple" id="jobRemoteChip" hidden>🌐 Remote</span>
+          </div>
+
+          <h1 class="job-title" id="jobTitle">Loading…</h1>
+
+          <p class="job-subtitle" id="jobSubtitle">
+            <span class="job-company" id="jobCompany">—</span>
+            <span class="dot" aria-hidden="true">•</span>
+            <span id="jobLocationTop">—</span>
+            <span class="dot" id="jobIndustryDot" aria-hidden="true" hidden>•</span>
+            <span id="jobIndustryTop"></span>
+          </p>
+
+          <div class="job-quick-meta">
+            <div class="quick-meta-item">
+              <div class="quick-meta-label">💰 Salary</div>
+              <div class="quick-meta-value" id="jobSalary">—</div>
+            </div>
+            <div class="quick-meta-item">
+              <div class="quick-meta-label">🧭 Experience</div>
+              <div class="quick-meta-value" id="jobExp">—</div>
+            </div>
+            <div class="quick-meta-item">
+              <div class="quick-meta-label">📍 Location</div>
+              <div class="quick-meta-value" id="jobLocationMeta">—</div>
+            </div>
+            <div class="quick-meta-item">
+              <div class="quick-meta-label">🗓 Posted</div>
+              <div class="quick-meta-value" id="jobPostedDate">—</div>
+            </div>
+          </div>
+
+        </div>
+      </header>
+
+      <!-- Job description -->
+      <section class="job-block" id="blockDescription">
+        <h2 class="job-block-title">
+          <span class="title-bar"></span>
+          Job Description
+        </h2>
+        <div class="job-rich" id="jobDescription"></div>
+      </section>
+
+      <!-- Requirements -->
+      <section class="job-block" id="blockRequirements">
+        <h2 class="job-block-title">
+          <span class="title-bar"></span>
+          Requirements
+        </h2>
+        <div class="job-rich" id="jobRequirements"></div>
+      </section>
+
+      <!-- Key Skills -->
+      <section class="job-block" id="blockSkills">
+        <h2 class="job-block-title">
+          <span class="title-bar"></span>
+          Key Skills
+        </h2>
+        <div class="skills-grid" id="jobSkills"></div>
+      </section>
+
+      <!-- Education -->
+      <section class="job-block" id="blockEducation">
+        <h2 class="job-block-title">
+          <span class="title-bar"></span>
+          Education
+        </h2>
+        <p class="job-rich" id="jobEducation"></p>
+      </section>
+
+      <!-- Benefits -->
+      <section class="job-block" id="blockBenefits">
+        <h2 class="job-block-title">
+          <span class="title-bar"></span>
+          Benefits &amp; Perks
+        </h2>
+        <div class="benefits-grid" id="jobBenefits"></div>
+      </section>
+
+      <!-- Industry -->
+      <section class="job-block" id="blockIndustry">
+        <h2 class="job-block-title">
+          <span class="title-bar"></span>
+          Industry
+        </h2>
+        <p class="job-rich" id="jobIndustry"></p>
+      </section>
+
+      <!-- About the Company -->
+      <section class="job-block" id="blockCompany">
+        <h2 class="job-block-title">
+          <span class="title-bar"></span>
+          About the Company
+        </h2>
+        <div class="company-card" id="companyCard">
+          <div class="company-logo" id="companyLogo" aria-hidden="true">🏢</div>
+          <div class="company-info">
+            <h3 class="company-name" id="companyName">—</h3>
+            <p class="company-address" id="companyAddress"></p>
+            <a class="company-link" id="companyWebsite" href="#" target="_blank" rel="noopener">
+              🌐 Visit website ↗
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Apply deadline (if set) -->
+      <section class="job-block job-deadline" id="blockDeadline" hidden>
+        <div class="deadline-banner">
+          <span class="deadline-icon">⏰</span>
+          <span>Apply before <strong id="jobDeadline">—</strong></span>
+        </div>
+      </section>
+
+      <!-- Similar jobs -->
+      <section class="job-block" id="blockSimilar">
+        <h2 class="job-block-title">
+          <span class="title-bar"></span>
+          Similar Jobs
+        </h2>
+        <div class="similar-grid" id="similarJobs"></div>
+      </section>
+
+    </article>
+
+    <!-- ============ RIGHT: APPLY FORM ============ -->
+    <aside class="job-sidebar" id="applySidebar">
+
+      <!-- Sticky action card -->
+      <div class="apply-card">
+
+        <div class="apply-card-head">
+          <div class="apply-card-label">Ready to apply?</div>
+          <div class="apply-card-title">Join this opportunity</div>
+          <div class="apply-card-sub" id="applyCardSub">
+            Verified role · Direct with hiring company
+          </div>
+        </div>
+
+        <!-- Save + Share row -->
+        <div class="apply-actions">
+          <button class="action-btn" id="saveBtn" type="button" aria-label="Save this job">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+            </svg>
+            <span id="saveBtnText">Save</span>
+          </button>
+          <button class="action-btn" id="shareBtn" type="button" aria-label="Share this job">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/>
+              <circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/>
+            </svg>
+            Share
+          </button>
+          <button class="action-btn" id="copyLinkBtn" type="button" aria-label="Copy link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2"/>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            Link
+          </button>
+        </div>
+
+        <!-- Apply form -->
+        <form id="applyForm" class="apply-form" novalidate>
+
+          <div class="form-row form-row-2">
+            <div class="form-field">
+              <label class="form-label" for="fName">Full Name <span class="req">*</span></label>
+              <input id="fName" name="fName" type="text" class="form-input"
+                     autocomplete="name" required minlength="2">
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="fPhone">Phone <span class="req">*</span></label>
+              <input id="fPhone" name="fPhone" type="tel" class="form-input"
+                     autocomplete="tel" required inputmode="numeric" maxlength="15"
+                     placeholder="10 digits">
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label class="form-label" for="fEmail">Email <span class="req">*</span></label>
+            <input id="fEmail" name="fEmail" type="email" class="form-input"
+                   autocomplete="email" required>
+          </div>
+
+          <div class="form-row form-row-2">
+            <div class="form-field">
+              <label class="form-label" for="fLocation">Current Location</label>
+              <input id="fLocation" name="fLocation" type="text" class="form-input"
+                     autocomplete="address-level2" placeholder="City">
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="fEducation">Education</label>
+              <input id="fEducation" name="fEducation" type="text" class="form-input"
+                     placeholder="e.g. B.E. Mechanical">
+            </div>
+          </div>
+
+          <div class="form-row form-row-2">
+            <div class="form-field">
+              <label class="form-label" for="fTotalExp">Total Experience <span class="req">*</span></label>
+              <input id="fTotalExp" name="fTotalExp" type="text" class="form-input"
+                     required placeholder="e.g. 4 years">
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="fRelExp">Relevant Experience</label>
+              <input id="fRelExp" name="fRelExp" type="text" class="form-input"
+                     placeholder="e.g. 3 years">
+            </div>
+          </div>
+
+          <div class="form-row form-row-2">
+            <div class="form-field">
+              <label class="form-label" for="fCurrentCtc">Current CTC</label>
+              <input id="fCurrentCtc" name="fCurrentCtc" type="text" class="form-input"
+                     placeholder="e.g. 3 LPA">
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="fExpectedCtc">Expected CTC</label>
+              <input id="fExpectedCtc" name="fExpectedCtc" type="text" class="form-input"
+                     placeholder="e.g. 5 LPA">
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label class="form-label" for="fNotice">Notice Period <span class="req">*</span></label>
+            <input id="fNotice" name="fNotice" type="text" class="form-input"
+                   required placeholder="e.g. 30 days / Immediate">
+          </div>
+
+          <div class="form-field">
+            <label class="form-label" for="fReason">Reason for Leaving</label>
+            <textarea id="fReason" name="fReason" class="form-input form-textarea"
+                      rows="2" placeholder="Optional"></textarea>
+          </div>
+
+          <!-- Resume upload -->
+          <div class="form-field">
+            <label class="form-label">Resume Upload <span class="req">*</span></label>
+            <label class="upload-zone" for="fResume" id="uploadZone">
+              <input id="fResume" name="fResume" type="file" class="upload-input"
+                     accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" required>
+              <div class="upload-icon" aria-hidden="true">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="17 8 12 3 7 8"/>
+                  <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+              </div>
+              <div class="upload-text">
+                <span class="upload-title">Choose file or drag &amp; drop</span>
+                <span class="upload-sub">PDF, DOC, DOCX, JPG · max 5 MB</span>
+              </div>
+              <div class="upload-file" id="uploadFileName"></div>
+            </label>
+          </div>
+
+          <!-- Hidden fields -->
+          <input type="hidden" id="fJobId">
+
+          <!-- Submit -->
+          <button type="submit" class="btn-apply" id="submitBtn">
+            <span class="btn-apply-text">Submit Application</span>
+          </button>
+
+          <p class="form-note">
+            By submitting, you agree to our
+            <a href="pages.html?page=terms" target="_blank" rel="noopener">Terms</a> and
+            <a href="pages.html?page=privacy" target="_blank" rel="noopener">Privacy Policy</a>.
+          </p>
+
+        </form>
+
+        <!-- Success state -->
+        <div class="apply-success" id="applySuccess" hidden>
+          <div class="success-icon">✓</div>
+          <h3 class="success-title">Application submitted</h3>
+          <p class="success-text">
+            Reference ID: <strong id="successAppId">—</strong>
+          </p>
+          <p class="success-note">
+            We've sent a confirmation email. Our recruiter will reach out
+            within 2–3 working days.
+          </p>
+          <a href="index.html#jobs" class="btn-primary btn-block">Browse more jobs</a>
+        </div>
+
+      </div>
+    </aside>
+
+  </div>
+</main>
+
+<!-- ==========================================================================
+     MOBILE STICKY APPLY BAR
+     ========================================================================== -->
+<div class="mobile-apply-bar" id="mobileApplyBar" hidden>
+  <div class="mobile-apply-info">
+    <div class="mobile-apply-title" id="mobileJobTitle">—</div>
+    <div class="mobile-apply-sub" id="mobileJobSalary">—</div>
+  </div>
+  <button class="btn-apply btn-apply-sm" id="mobileApplyBtn">
+    Apply Now
+  </button>
+</div>
+
+<!-- ==========================================================================
+     SHARE POPOVER
+     ========================================================================== -->
+<div class="share-popover" id="sharePopover" hidden>
+  <div class="share-popover-head">
+    <span>Share this job</span>
+    <button class="share-close" id="shareClose" aria-label="Close">×</button>
+  </div>
+  <a class="share-option" id="shareWhatsapp" href="#" target="_blank" rel="noopener">
+    <span class="share-ico" style="background:#25D366">💬</span>
+    <span>WhatsApp</span>
+  </a>
+  <a class="share-option" id="shareEmail" href="#">
+    <span class="share-ico" style="background:#1A365D">✉️</span>
+    <span>Email</span>
+  </a>
+  <a class="share-option" id="shareLinkedin" href="#" target="_blank" rel="noopener">
+    <span class="share-ico" style="background:#0077B5">in</span>
+    <span>LinkedIn</span>
+  </a>
+  <button class="share-option" id="shareCopy">
+    <span class="share-ico" style="background:#64748B">🔗</span>
+    <span>Copy link</span>
+  </button>
+</div>
+
+<!-- ==========================================================================
+     FOOTER
+     ========================================================================== -->
+<footer class="site-footer">
+  <div class="container footer-grid">
+
+    <div class="footer-col footer-brand">
+      <div class="brand brand-footer">
+        <span class="brand-mark" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white"
+               stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/>
+          </svg>
+        </span>
+        <span class="brand-text">
+          <span class="brand-title">Raveone Careers</span>
+          <span class="brand-sub">Executive Search &amp; Selection</span>
+        </span>
+      </div>
+      <p class="footer-blurb">
+        Connecting exceptional talent with MSME manufacturers, engineering firms,
+        and enterprises across India.
+      </p>
+      <div class="footer-contact">
+        <a href="tel:+919148330565">📞 9148330565</a>
+        <a href="mailto:rajesh@raveone.in">✉️ rajesh@raveone.in</a>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h4 class="footer-heading">For Candidates</h4>
+      <ul class="footer-list">
+        <li><a href="index.html#jobs">Browse Jobs</a></li>
+        <li><a href="pages.html?page=submit-cv">Submit CV</a></li>
+        <li><a href="pages.html?page=process">Our Process</a></li>
+        <li><a href="pages.html?page=blog">Career Blog</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4 class="footer-heading">For Employers</h4>
+      <ul class="footer-list">
+        <li><a href="pages.html?page=employers">Post a Job</a></li>
+        <li><a href="pages.html?page=employers">Why Raveone</a></li>
+        <li><a href="pages.html?page=contact">Talk to Us</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4 class="footer-heading">Company</h4>
+      <ul class="footer-list">
+        <li><a href="pages.html?page=about">About Us</a></li>
+        <li><a href="pages.html?page=contact">Contact</a></li>
+        <li><a href="https://www.raveone.in" target="_blank" rel="noopener">www.raveone.in ↗</a></li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    <div class="container footer-bottom-inner">
+      <p class="footer-copy">
+        © <span id="footerYear"></span> Raveone Consultants. All rights reserved.
+      </p>
+      <div class="footer-legal">
+        <a href="pages.html?page=terms">Terms &amp; Conditions</a>
+        <span aria-hidden="true">·</span>
+        <a href="pages.html?page=privacy">Privacy Policy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ==========================================================================
+     SCRIPTS
+     ========================================================================== -->
+<script src="app.js" defer></script>
+<script>
+/* ==========================================================================
+   JOB DETAIL PAGE — INLINE CONTROLLER
+   Runs after app.js loads. Uses global helpers from app.js.
+   ========================================================================== */
+document.addEventListener('DOMContentLoaded', function () {
+  // Prevent index.html's board logic from running on this page
+  if (window.__jobDetailInit) return;
+  window.__jobDetailInit = true;
+
+  // Set current year
+  const y = document.getElementById('footerYear');
+  if (y) y.textContent = new Date().getFullYear();
+
+  // Bootstrap
+  if (typeof window.initJobDetail === 'function') {
+    window.initJobDetail();
+  } else {
+    // app.js not yet loaded or missing helper — retry shortly
+    setTimeout(function () {
+      if (typeof window.initJobDetail === 'function') {
+        window.initJobDetail();
+      } else {
+        console.error('app.js is missing initJobDetail() — check file loaded correctly.');
+      }
+    }, 300);
+  }
+});
+</script>
+
+</body>
+</html>
