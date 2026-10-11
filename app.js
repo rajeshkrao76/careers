@@ -973,6 +973,8 @@ const IndexPage = {
    ========================================================================== */
 const JobDetail = {
   init: function () {
+    if (JobDetail.__initialized) return;
+    JobDetail.__initialized = true;
     this.cacheEls();
     this.bindEvents();
     this.loadJob();
@@ -1640,10 +1642,9 @@ function raveoneBoot() {
  * Expose to inline scripts on job.html
  */
 window.initJobDetail = function () {
-  if (!STATE.currentJob) {
-    JobDetail.init();
-  }
+  JobDetail.init();
 };
+
 window.RAVEONE_API_URL = API_URL;
 
 /* ==========================================================================
