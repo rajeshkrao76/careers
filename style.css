@@ -1627,6 +1627,7 @@ input.filter-input {
 
 /* Upload zone */
 .upload-zone {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1659,9 +1660,13 @@ input.filter-input {
 
 .upload-input {
   position: absolute;
-  width: 1px; height: 1px;
+  width: 1px;
+  height: 1px;
   opacity: 0;
-  pointer-events: none;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .upload-icon { color: var(--navy-600); }
