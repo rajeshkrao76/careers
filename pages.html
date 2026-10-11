@@ -1028,12 +1028,27 @@
 })();
 
 /* ==========================================================================
-   EMPLOYER FORM — lightweight inline submit (opens mailto as fallback)
-   Full server-side submission can be added via API later.
+   EMPLOYER / POST A JOB FORM — POST to Apps Script API (no mailto)
    ========================================================================== */
 (function () {
   const form = document.getElementById('employerForm');
   if (!form) return;
+
+  function getApiUrl() {
+    if (window.RAVEONE_API_URL) return window.RAVEONE_API_URL;
+    return "";
+  }
+
+  const showToast = function (msg) {
+    const t = document.createElement("div");
+    t.style.cssText =
+      "position:fixed;bottom:24px;left:50%;transform:translateX(-50%);" +
+      "background:#0F172A;color:#fff;padding:10px 20px;border-radius:999px;" +
+      "font-size:13px;font-weight:600;z-index:9999;box-shadow:0 10px 30px rgba(0,0,0,.2);";
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(function () { t.remove(); }, 3200);
+  };
 
   form.addEventListener('submit', function (e) {
     e.preventDefault();
@@ -1043,7 +1058,7 @@
       company:   document.getElementById('empCompany').value.trim(),
       contact:   document.getElementById('empContact').value.trim(),
       email:     document.getElementById('empEmail').value.trim(),
-      phone:     document.getElementById('empPhone').value.trim(),
+      phone:     document.getElementById('empPhone').value.trim().replace(/[^\d]/g, ''),
       role:      document.getElementById('empRole').value.trim(),
       location:  document.getElementById('empLocation').value.trim(),
       salaryMin: document.getElementById('empSalaryMin').value.trim(),
@@ -1051,38 +1066,56 @@
       jd:        document.getElementById('empJD').value.trim()
     };
 
+    // Poka-Yoke
     if (!data.company || !data.contact || !data.email || !data.phone ||
         !data.role || !data.location || !data.jd) {
-      alert('Please fill all required fields.');
-      return;
+      return showToast("Please fill all required fields.");
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+      return showToast("Please enter a valid email.");
+    }
+    if (data.phone.length !== 10 || !/^[6-9]/.test(data.phone)) {
+      return showToast("Enter a valid 10-digit Indian mobile number.");
     }
 
-    // Send via email (mailto fallback — reliable, no API needed)
-    const body =
-      'Company: ' + data.company + '\n' +
-      'Contact: ' + data.contact + '\n' +
-      'Email: ' + data.email + '\n' +
-      'Phone: ' + data.phone + '\n\n' +
-      'Role: ' + data.role + '\n' +
-      'Location: ' + data.location + '\n' +
-      'Salary: ' + (data.salaryMin || '—') + ' to ' + (data.salaryMax || '—') + '\n\n' +
-      'JD:\n' + data.jd;
+    const url = getApiUrl();
+    if (!url) return showToast("Config error — please email rajesh@raveone.in");
 
+    // Optional: check if user attached a JD file
+    const fileInput = document.getElementById('empJD'); // no file input on this form by default
+
+    const origText = btn.textContent;
     btn.disabled = true;
-    btn.textContent = 'Opening email…';
+    btn.textContent = "Sending…";
 
-    const mailto = 'mailto:rajesh@raveone.in' +
-      '?subject=' + encodeURIComponent('New Job Requirement: ' + data.role + ' at ' + data.company) +
-      '&body=' + encodeURIComponent(body);
+    data.action = "submitEmployerJob";
+    data.fileData = null;
+    data.fileName = null;
 
-    window.location.href = mailto;
+    // If you add an optional <input type="file"> to the form, handle it here:
+    // (see note below)
 
-    setTimeout(function () {
-      btn.disabled = false;
-      btn.textContent = 'Send Requirement';
-      alert('✅ Your email app will open with the requirement details. Please send it.\n\nIf your email app did not open, send the details to rajesh@raveone.in');
-      form.reset();
-    }, 800);
+    fetch(url, {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: { "Content-Type": "text/plain;charset=utf-8" }
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (res) {
+        if (res && res.ok) {
+          form.reset();
+          btn.disabled = false;
+          btn.textContent = origText;
+          showToast("✅ Received! We'll contact you within 24 hours.");
+        } else {
+          throw new Error((res && res.error) || "Submission failed");
+        }
+      })
+      .catch(function (err) {
+        btn.disabled = false;
+        btn.textContent = origText;
+        showToast("⚠️ " + (err.message || "Please email rajesh@raveone.in"));
+      });
   });
 })();
 
