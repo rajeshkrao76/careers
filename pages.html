@@ -1087,82 +1087,119 @@
 })();
 
 /* ==========================================================================
-   TALENT POOL FORM — submit to Apps Script API
+   TALENT POOL FORM — POST to Apps Script API (no mailto)
    ========================================================================== */
 (function () {
   const form = document.getElementById('talentPoolForm');
   if (!form) return;
 
-  form.addEventListener('submit', async function (e) {
+  const API_URL = window.RAVEONE_API_URL || "";
+  // If API_URL is empty, get it from app.js's global — should already exist
+  function getApiUrl() {
+    if (API_URL) return API_URL;
+    if (window.RAVEONE_API_URL) return window.RAVEONE_API_URL;
+    // Fallback: search for a <script> that sets it
+    return "";
+  }
+
+  const showToast = function (msg) {
+    const t = document.createElement("div");
+    t.style.cssText =
+      "position:fixed;bottom:24px;left:50%;transform:translateX(-50%);" +
+      "background:#0F172A;color:#fff;padding:10px 20px;border-radius:999px;" +
+      "font-size:13px;font-weight:600;z-index:9999;box-shadow:0 10px 30px rgba(0,0,0,.2);";
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(function () { t.remove(); }, 3200);
+  };
+
+  form.addEventListener('submit', function (e) {
     e.preventDefault();
     const btn = document.getElementById('tpSubmitBtn');
 
-    const name  = document.getElementById('tpName').value.trim();
-    const phone = document.getElementById('tpPhone').value.trim().replace(/[^\d]/g, '');
-    const email = document.getElementById('tpEmail').value.trim();
-    const skills = document.getElementById('tpSkills').value.trim();
+    const name     = document.getElementById('tpName').value.trim();
+    const phone    = document.getElementById('tpPhone').value.trim().replace(/[^\d]/g, '');
+    const email    = document.getElementById('tpEmail').value.trim();
+    const location = document.getElementById('tpLocation').value.trim();
+    const education= document.getElementById('tpEducation').value.trim();
+    const totalExp = document.getElementById('tpTotalExp').value.trim();
+    const currentCtc = document.getElementById('tpCurrentCtc').value.trim();
+    const expectedCtc= document.getElementById('tpExpectedCtc').value.trim();
+    const notice   = document.getElementById('tpNotice').value.trim();
+    const skills   = document.getElementById('tpSkills').value.trim();
     const fileInput = document.getElementById('tpResume');
 
-    if (!name || !phone || !email || !skills) {
-      alert('Please fill all required fields.');
-      return;
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      alert('Please enter a valid email.');
-      return;
-    }
-    if (phone.length !== 10 || !/^[6-9]/.test(phone)) {
-      alert('Please enter a valid 10-digit Indian mobile number.');
-      return;
-    }
-    if (!fileInput.files.length) {
-      alert('Please upload your resume.');
-      return;
-    }
-    const file = fileInput.files[0];
-    if (file.size > 5 * 1024 * 1024) {
-      alert('Resume must be under 5 MB.');
-      return;
-    }
+    // Poka-Yoke validation
+    if (!name || name.length < 2) return showToast("Please enter your full name.");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showToast("Please enter a valid email.");
+    if (phone.length !== 10 || !/^[6-9]/.test(phone)) return showToast("Enter a valid 10-digit Indian mobile number.");
+    if (!totalExp) return showToast("Total experience is required.");
+    if (!skills) return showToast("Key skills are required.");
+    if (!fileInput.files.length) return showToast("Please upload your resume.");
 
+    const file = fileInput.files[0];
+    if (file.size > 5 * 1024 * 1024) return showToast("Resume must be under 5 MB.");
+    const allowed = [".pdf", ".doc", ".docx", ".jpg", ".jpeg", ".png"];
+    const ext = file.name.substring(file.name.lastIndexOf(".")).toLowerCase();
+    if (allowed.indexOf(ext) === -1) return showToast("Resume must be PDF, DOC, DOCX, JPG, or PNG.");
+
+    // Busy state
+    const origText = btn.textContent;
     btn.disabled = true;
-    btn.textContent = 'Submitting…';
+    btn.textContent = "Submitting…";
 
     const reader = new FileReader();
-    reader.onload = async function (ev) {
-      try {
-        const base64 = String(ev.target.result).split(',')[1];
-        const resp = await fetch((window.RAVEONE_API_URL || '') , {
-          method: 'POST',
-          body: JSON.stringify({
-            action: 'submitCandidate',
-            jobId: 'TALENT_POOL',
-            name: name,
-            email: email,
-            phone: phone,
-            education: document.getElementById('tpEducation').value.trim(),
-            totalExp: document.getElementById('tpTotalExp').value.trim(),
-            currentCtc: document.getElementById('tpCurrentCtc').value.trim(),
-            expectedCtc: document.getElementById('tpExpectedCtc').value.trim(),
-            noticePeriod: document.getElementById('tpNotice').value.trim(),
-            location: document.getElementById('tpLocation').value.trim(),
-            reasonLeaving: skills,
-            resumeData: base64,
-            resumeName: file.name
-          })
-        });
-        const result = await resp.json();
-        if (result && result.ok) {
-          form.hidden = true;
-          document.getElementById('tpSuccess').hidden = false;
-        } else {
-          throw new Error((result && result.error) || 'Submission failed');
-        }
-      } catch (err) {
-        alert('⚠️ ' + (err.message || 'Submission failed') + '\n\nPlease email your CV to rajesh@raveone.in');
+    reader.onload = function (ev) {
+      const base64 = String(ev.target.result).split(",")[1];
+
+      const payload = {
+        action: "submitTalentPool",
+        name: name,
+        email: email,
+        phone: phone,
+        location: location,
+        education: education,
+        totalExp: totalExp,
+        currentCtc: currentCtc,
+        expectedCtc: expectedCtc,
+        noticePeriod: notice,
+        skills: skills,
+        fileData: base64,
+        fileName: file.name
+      };
+
+      const url = getApiUrl();
+      if (!url) {
         btn.disabled = false;
-        btn.textContent = 'Join Talent Pool';
+        btn.textContent = origText;
+        return showToast("Config error — please email your CV to rajesh@raveone.in");
       }
+
+      fetch(url, {
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: { "Content-Type": "text/plain;charset=utf-8" }
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (res) {
+          if (res && res.ok) {
+            form.hidden = true;
+            const successEl = document.getElementById('tpSuccess');
+            if (successEl) successEl.hidden = false;
+          } else {
+            throw new Error((res && res.error) || "Submission failed");
+          }
+        })
+        .catch(function (err) {
+          btn.disabled = false;
+          btn.textContent = origText;
+          showToast("⚠️ " + (err.message || "Please email your CV to rajesh@raveone.in"));
+        });
+    };
+    reader.onerror = function () {
+      btn.disabled = false;
+      btn.textContent = origText;
+      showToast("Could not read file. Please try again.");
     };
     reader.readAsDataURL(file);
   });
