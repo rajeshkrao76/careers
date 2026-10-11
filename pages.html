@@ -430,10 +430,7 @@
             </div>
           </div>
 
-          <div class="form-field">
-            <label class="form-label" for="empJD">Job Description / Requirements <span class="req">*</span></label>
-            <textarea id="empJD" class="form-input form-textarea" rows="5" required
-                      placeholder="Paste the JD or list the key responsibilities and requirements."></textarea>
+        
           </div>
           <div class="form-field">
             <label class="form-label" for="empJD">Job Description / Requirements <span class="req">*</span></label>
@@ -450,9 +447,7 @@
           </div>
           <!-- 👆 END OF NEW BLOCK 👆 -->
 
-          <button type="submit" class="btn-primary" id="empSubmitBtn">
-            Send Requirement
-          </button>
+      
           <button type="submit" class="btn-primary" id="empSubmitBtn">
             Send Requirement
           </button>
@@ -974,349 +969,328 @@
 <script src="app.js" defer></script>
 
 <script>
-/* ==========================================================================
-   PAGES ROUTER — inline controller
-   Reads ?page=xxx and shows the matching section.
-   Falls back to About if no match.
-   ========================================================================== */
 (function () {
   'use strict';
 
-  const PAGES = {
-    'about':      { title: 'About Us — Raveone Careers',        crumb: 'About Us' },
-    'process':    { title: 'Our Process — Raveone Careers',     crumb: 'Our Process' },
-    'employers':  { title: 'For Employers — Raveone Careers',   crumb: 'Employers (MSME)' },
-    'submit-cv':  { title: 'Submit CV — Raveone Careers',       crumb: 'Submit CV' },
-    'contact':    { title: 'Contact Us — Raveone Careers',      crumb: 'Contact Us' },
-    'terms':      { title: 'Terms & Conditions — Raveone Careers', crumb: 'Terms & Conditions' },
-    'privacy':    { title: 'Privacy Policy — Raveone Careers',  crumb: 'Privacy Policy' }
+  /* =========================================================
+     1. ROUTER — runs immediately, always shows a page
+     ========================================================= */
+  var PAGES = {
+    'about':      { title: 'About Us — Raveone Careers',            crumb: 'About Us' },
+    'process':    { title: 'Our Process — Raveone Careers',         crumb: 'Our Process' },
+    'employers':  { title: 'For Employers — Raveone Careers',       crumb: 'Employers (MSME)' },
+    'submit-cv':  { title: 'Submit CV — Raveone Careers',           crumb: 'Submit CV' },
+    'contact':    { title: 'Contact Us — Raveone Careers',          crumb: 'Contact Us' },
+    'terms':      { title: 'Terms & Conditions — Raveone Careers',  crumb: 'Terms & Conditions' },
+    'privacy':    { title: 'Privacy Policy — Raveone Careers',      crumb: 'Privacy Policy' }
   };
 
   function getParam(key) {
     try {
-      const u = new URL(window.location.href);
+      var u = new URL(window.location.href);
       return u.searchParams.get(key);
     } catch (e) {
-      const m = window.location.search.match(new RegExp('[?&]' + key + '=([^&]+)'));
+      var m = window.location.search.match(new RegExp('[?&]' + key + '=([^&]+)'));
       return m ? decodeURIComponent(m[1]) : '';
     }
   }
 
-  function route() {
-    const pageKey = (getParam('page') || 'about').toLowerCase();
-    const page = PAGES[pageKey] || PAGES['about'];
-    const sectionId = 'page-' + (PAGES[pageKey] ? pageKey : 'about');
-    const section = document.getElementById(sectionId);
+  function runRouter() {
+    try {
+      var pageKey = (getParam('page') || 'about').toLowerCase();
+      var page = PAGES[pageKey] || PAGES['about'];
+      var sectionId = 'page-' + (PAGES[pageKey] ? pageKey : 'about');
+      var section = document.getElementById(sectionId);
 
-    // Hide all, show target
-    document.querySelectorAll('#pageContent > section').forEach(function (s) {
-      s.classList.remove('active');
-    });
-    if (section) section.classList.add('active');
+      document.querySelectorAll('#pageContent > section').forEach(function (s) {
+        s.classList.remove('active');
+      });
+      if (section) section.classList.add('active');
 
-    // Update head
-    document.title = page.title;
-    const t = document.getElementById('pageTitle');
-    if (t) t.textContent = page.title;
-    const crumb = document.getElementById('crumbCurrent');
-    if (crumb) crumb.textContent = page.crumb;
-    const meta = document.getElementById('metaDescription');
-    if (meta) meta.setAttribute('content', page.title);
+      document.title = page.title;
+      var t = document.getElementById('pageTitle');
+      if (t) t.textContent = page.title;
+      var crumb = document.getElementById('crumbCurrent');
+      if (crumb) crumb.textContent = page.crumb;
+      var meta = document.getElementById('metaDescription');
+      if (meta) meta.setAttribute('content', page.title);
 
-    // Highlight active nav link
-    document.querySelectorAll('.main-nav .nav-link').forEach(function (a) {
-      a.classList.toggle('active', a.getAttribute('data-page') === pageKey);
-    });
+      document.querySelectorAll('.main-nav .nav-link').forEach(function (a) {
+        a.classList.toggle('active', a.getAttribute('data-page') === pageKey);
+      });
 
-    // Scroll to top
-    window.scrollTo({ top: 0, behavior: 'instant' });
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    } catch (err) {
+      console.error('Router error:', err);
+    }
   }
 
   // Footer year
-  const y = document.getElementById('footerYear');
-  if (y) y.textContent = new Date().getFullYear();
+  try {
+    var y = document.getElementById('footerYear');
+    if (y) y.textContent = new Date().getFullYear();
+  } catch (e) {}
 
-  // Init
+  // Run router NOW
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', route);
+    document.addEventListener('DOMContentLoaded', runRouter);
   } else {
-    route();
+    runRouter();
   }
-})();
 
-/* ==========================================================================
-   EMPLOYER / POST A JOB FORM — POST to Apps Script API (no mailto)
-   ========================================================================== */
-(function () {
-  const form = document.getElementById('employerForm');
-  if (!form) return;
-
-  function getApiUrl() {
+  /* =========================================================
+     2. HELPERS
+     ========================================================= */
+  function apiUrl() {
     if (window.RAVEONE_API_URL) return window.RAVEONE_API_URL;
-    return "";
+    if (window.API_URL) return window.API_URL;
+    return '';
   }
 
-  const showToast = function (msg) {
-    const t = document.createElement("div");
+  function toast(msg) {
+    var t = document.createElement('div');
     t.style.cssText =
-      "position:fixed;bottom:24px;left:50%;transform:translateX(-50%);" +
-      "background:#0F172A;color:#fff;padding:10px 20px;border-radius:999px;" +
-      "font-size:13px;font-weight:600;z-index:9999;box-shadow:0 10px 30px rgba(0,0,0,.2);";
+      'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);' +
+      'background:#0F172A;color:#fff;padding:10px 20px;border-radius:999px;' +
+      'font-size:13px;font-weight:600;z-index:9999;box-shadow:0 10px 30px rgba(0,0,0,.2);';
     t.textContent = msg;
     document.body.appendChild(t);
     setTimeout(function () { t.remove(); }, 3200);
-  };
+  }
 
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    const btn = document.getElementById('empSubmitBtn');
+  function validEmail(v) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v || ''));
+  }
 
-    const data = {
-      company:   document.getElementById('empCompany').value.trim(),
-      contact:   document.getElementById('empContact').value.trim(),
-      email:     document.getElementById('empEmail').value.trim(),
-      phone:     document.getElementById('empPhone').value.trim().replace(/[^\d]/g, ''),
-      role:      document.getElementById('empRole').value.trim(),
-      location:  document.getElementById('empLocation').value.trim(),
-      salaryMin: document.getElementById('empSalaryMin').value.trim(),
-      salaryMax: document.getElementById('empSalaryMax').value.trim(),
-      jd:        document.getElementById('empJD').value.trim()
+  function validPhone(v) {
+    var s = String(v || '').replace(/[^\d]/g, '');
+    return s.length === 10 && /^[6-9]/.test(s);
+  }
+
+  function readAsBase64(file, cb) {
+    var r = new FileReader();
+    r.onload = function (ev) {
+      var parts = String(ev.target.result).split(',');
+      cb(parts.length > 1 ? parts[1] : parts[0]);
     };
-
-    // Poka-Yoke
-    if (!data.company || !data.contact || !data.email || !data.phone ||
-        !data.role || !data.location || !data.jd) {
-      return showToast("Please fill all required fields.");
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
-      return showToast("Please enter a valid email.");
-    }
-    if (data.phone.length !== 10 || !/^[6-9]/.test(data.phone)) {
-      return showToast("Enter a valid 10-digit Indian mobile number.");
-    }
-
-    const url = getApiUrl();
-    if (!url) return showToast("Config error — please email rajesh@raveone.in");
-
-    // Optional: check if user attached a JD file
-    const fileInput = document.getElementById('empJD'); // no file input on this form by default
-
-    const origText = btn.textContent;
-    btn.disabled = true;
-    btn.textContent = "Sending…";
-
-    data.action = "submitEmployerJob";
-
-const fileInput = document.getElementById('empFile');
-if (fileInput && fileInput.files.length) {
-  const f = fileInput.files[0];
-  if (f.size > 5 * 1024 * 1024) {
-    btn.disabled = false;
-    btn.textContent = origText;
-    return showToast("JD file must be under 5 MB.");
-  }
-  const reader = new FileReader();
-  reader.onload = function (ev) {
-    data.fileData = String(ev.target.result).split(",")[1];
-    data.fileName = f.name;
-    sendRequest();
-  };
-  reader.readAsDataURL(f);
-  return;
-}
-// No file — send directly
-sendRequest();
-
-function sendRequest() {
-  fetch(url, { /* ... */ })
-    // ...
-}
-
-    // If you add an optional <input type="file"> to the form, handle it here:
-    // (see note below)
-
-    fetch(url, {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: { "Content-Type": "text/plain;charset=utf-8" }
-    })
-      .then(function (r) { return r.json(); })
-      .then(function (res) {
-        if (res && res.ok) {
-          form.reset();
-          btn.disabled = false;
-          btn.textContent = origText;
-          showToast("✅ Received! We'll contact you within 24 hours.");
-        } else {
-          throw new Error((res && res.error) || "Submission failed");
-        }
-      })
-      .catch(function (err) {
-        btn.disabled = false;
-        btn.textContent = origText;
-        showToast("⚠️ " + (err.message || "Please email rajesh@raveone.in"));
-      });
-  });
-})();
-
-/* ==========================================================================
-   TALENT POOL FORM — POST to Apps Script API (no mailto)
-   ========================================================================== */
-(function () {
-  const form = document.getElementById('talentPoolForm');
-  if (!form) return;
-
-  const API_URL = window.RAVEONE_API_URL || "";
-  // If API_URL is empty, get it from app.js's global — should already exist
-  function getApiUrl() {
-    if (API_URL) return API_URL;
-    if (window.RAVEONE_API_URL) return window.RAVEONE_API_URL;
-    // Fallback: search for a <script> that sets it
-    return "";
+    r.readAsDataURL(file);
   }
 
-  const showToast = function (msg) {
-    const t = document.createElement("div");
-    t.style.cssText =
-      "position:fixed;bottom:24px;left:50%;transform:translateX(-50%);" +
-      "background:#0F172A;color:#fff;padding:10px 20px;border-radius:999px;" +
-      "font-size:13px;font-weight:600;z-index:9999;box-shadow:0 10px 30px rgba(0,0,0,.2);";
-    t.textContent = msg;
-    document.body.appendChild(t);
-    setTimeout(function () { t.remove(); }, 3200);
-  };
+  function v(id) {
+    var el = document.getElementById(id);
+    return el ? el.value : '';
+  }
 
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    const btn = document.getElementById('tpSubmitBtn');
+  /* =========================================================
+     3. FORM BINDINGS — run after DOM + app.js loaded
+     ========================================================= */
+  function bindForms() {
 
-    const name     = document.getElementById('tpName').value.trim();
-    const phone    = document.getElementById('tpPhone').value.trim().replace(/[^\d]/g, '');
-    const email    = document.getElementById('tpEmail').value.trim();
-    const location = document.getElementById('tpLocation').value.trim();
-    const education= document.getElementById('tpEducation').value.trim();
-    const totalExp = document.getElementById('tpTotalExp').value.trim();
-    const currentCtc = document.getElementById('tpCurrentCtc').value.trim();
-    const expectedCtc= document.getElementById('tpExpectedCtc').value.trim();
-    const notice   = document.getElementById('tpNotice').value.trim();
-    const skills   = document.getElementById('tpSkills').value.trim();
-    const fileInput = document.getElementById('tpResume');
+    /* -------- 3A: TALENT POOL (Submit CV) -------- */
+    try {
+      var tpForm = document.getElementById('talentPoolForm');
+      if (tpForm) {
+        tpForm.addEventListener('submit', function (e) {
+          e.preventDefault();
+          var btn = document.getElementById('tpSubmitBtn');
+          if (!btn) return;
 
-    // Poka-Yoke validation
-    if (!name || name.length < 2) return showToast("Please enter your full name.");
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showToast("Please enter a valid email.");
-    if (phone.length !== 10 || !/^[6-9]/.test(phone)) return showToast("Enter a valid 10-digit Indian mobile number.");
-    if (!totalExp) return showToast("Total experience is required.");
-    if (!skills) return showToast("Key skills are required.");
-    if (!fileInput.files.length) return showToast("Please upload your resume.");
+          var name        = v('tpName').trim();
+          var phone       = v('tpPhone').replace(/[^\d]/g, '');
+          var email       = v('tpEmail').trim();
+          var location    = v('tpLocation').trim();
+          var education   = v('tpEducation').trim();
+          var totalExp    = v('tpTotalExp').trim();
+          var currentCtc  = v('tpCurrentCtc').trim();
+          var expectedCtc = v('tpExpectedCtc').trim();
+          var notice      = v('tpNotice').trim();
+          var skills      = v('tpSkills').trim();
+          var fileEl      = document.getElementById('tpResume');
 
-    const file = fileInput.files[0];
-    if (file.size > 5 * 1024 * 1024) return showToast("Resume must be under 5 MB.");
-    const allowed = [".pdf", ".doc", ".docx", ".jpg", ".jpeg", ".png"];
-    const ext = file.name.substring(file.name.lastIndexOf(".")).toLowerCase();
-    if (allowed.indexOf(ext) === -1) return showToast("Resume must be PDF, DOC, DOCX, JPG, or PNG.");
+          if (!name || name.length < 2) return toast('Please enter your full name.');
+          if (!validEmail(email)) return toast('Please enter a valid email.');
+          if (!validPhone(phone)) return toast('Enter a valid 10-digit Indian mobile number.');
+          if (!totalExp) return toast('Total experience is required.');
+          if (!skills) return toast('Key skills are required.');
+          if (!fileEl || !fileEl.files || !fileEl.files.length) return toast('Please upload your resume.');
 
-    // Busy state
-    const origText = btn.textContent;
-    btn.disabled = true;
-    btn.textContent = "Submitting…";
-
-    const reader = new FileReader();
-    reader.onload = function (ev) {
-      const base64 = String(ev.target.result).split(",")[1];
-
-      const payload = {
-        action: "submitTalentPool",
-        name: name,
-        email: email,
-        phone: phone,
-        location: location,
-        education: education,
-        totalExp: totalExp,
-        currentCtc: currentCtc,
-        expectedCtc: expectedCtc,
-        noticePeriod: notice,
-        skills: skills,
-        fileData: base64,
-        fileName: file.name
-      };
-
-      const url = getApiUrl();
-      if (!url) {
-        btn.disabled = false;
-        btn.textContent = origText;
-        return showToast("Config error — please email your CV to rajesh@raveone.in");
-      }
-
-      fetch(url, {
-        method: "POST",
-        body: JSON.stringify(payload),
-        headers: { "Content-Type": "text/plain;charset=utf-8" }
-      })
-        .then(function (r) { return r.json(); })
-        .then(function (res) {
-          if (res && res.ok) {
-            form.hidden = true;
-            const successEl = document.getElementById('tpSuccess');
-            if (successEl) successEl.hidden = false;
-          } else {
-            throw new Error((res && res.error) || "Submission failed");
+          var f = fileEl.files[0];
+          if (f.size > 5 * 1024 * 1024) return toast('Resume must be under 5 MB.');
+          var ext = f.name.substring(f.name.lastIndexOf('.')).toLowerCase();
+          if (['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png'].indexOf(ext) === -1) {
+            return toast('Resume must be PDF, DOC, DOCX, JPG, or PNG.');
           }
-        })
-        .catch(function (err) {
-          btn.disabled = false;
-          btn.textContent = origText;
-          showToast("⚠️ " + (err.message || "Please email your CV to rajesh@raveone.in"));
+
+          var url = apiUrl();
+          if (!url) return toast('Config error — please email CV to rajesh@raveone.in');
+
+          var origText = btn.textContent;
+          btn.disabled = true;
+          btn.textContent = 'Submitting…';
+
+          readAsBase64(f, function (b64) {
+            var payload = {
+              action: 'submitTalentPool',
+              name: name, email: email, phone: phone,
+              location: location, education: education,
+              totalExp: totalExp, currentCtc: currentCtc,
+              expectedCtc: expectedCtc, noticePeriod: notice,
+              skills: skills,
+              fileData: b64, fileName: f.name
+            };
+
+            fetch(url, {
+              method: 'POST',
+              body: JSON.stringify(payload),
+              headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+            })
+              .then(function (r) { return r.json(); })
+              .then(function (res) {
+                if (res && res.ok) {
+                  tpForm.hidden = true;
+                  var s = document.getElementById('tpSuccess');
+                  if (s) s.hidden = false;
+                } else {
+                  throw new Error((res && res.error) || 'Submission failed');
+                }
+              })
+              .catch(function (err) {
+                btn.disabled = false;
+                btn.textContent = origText;
+                toast('⚠️ ' + (err.message || 'Please email CV to rajesh@raveone.in'));
+              });
+          });
         });
-    };
-    reader.onerror = function () {
-      btn.disabled = false;
-      btn.textContent = origText;
-      showToast("Could not read file. Please try again.");
-    };
-    reader.readAsDataURL(file);
-  });
-})();
+      }
+    } catch (e) { console.error('Talent pool form error:', e); }
 
-/* ==========================================================================
-   CONTACT FORM — mailto fallback
-   ========================================================================== */
-(function () {
-  const form = document.getElementById('contactForm');
-  if (!form) return;
+    /* -------- 3B: EMPLOYER (Post a Job) -------- */
+    try {
+      var empForm = document.getElementById('employerForm');
+      if (empForm) {
+        empForm.addEventListener('submit', function (e) {
+          e.preventDefault();
+          var btn = document.getElementById('empSubmitBtn');
+          if (!btn) return;
 
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    const name = document.getElementById('ctName').value.trim();
-    const phone = document.getElementById('ctPhone').value.trim();
-    const email = document.getElementById('ctEmail').value.trim();
-    const subject = document.getElementById('ctSubject').value;
-    const message = document.getElementById('ctMessage').value.trim();
+          var data = {
+            company:   v('empCompany').trim(),
+            contact:   v('empContact').trim(),
+            email:     v('empEmail').trim(),
+            phone:     v('empPhone').replace(/[^\d]/g, ''),
+            role:      v('empRole').trim(),
+            location:  v('empLocation').trim(),
+            salaryMin: v('empSalaryMin').trim(),
+            salaryMax: v('empSalaryMax').trim(),
+            jd:        v('empJD').trim()
+          };
 
-    if (!name || !phone || !email || !subject || !message) {
-      alert('Please fill all required fields.');
-      return;
-    }
+          if (!data.company || !data.contact || !data.email || !data.phone ||
+              !data.role || !data.location || !data.jd) {
+            return toast('Please fill all required fields.');
+          }
+          if (!validEmail(data.email)) return toast('Please enter a valid email.');
+          if (!validPhone(data.phone)) return toast('Enter a valid 10-digit Indian mobile number.');
 
-    const body =
-      'Name: ' + name + '\n' +
-      'Phone: ' + phone + '\n' +
-      'Email: ' + email + '\n\n' +
-      message;
+          var url = apiUrl();
+          if (!url) return toast('Config error — please email rajesh@raveone.in');
 
-    const mailto = 'mailto:rajesh@raveone.in' +
-      '?subject=' + encodeURIComponent('[Careers] ' + subject) +
-      '&body=' + encodeURIComponent(body);
+          var origText = btn.textContent;
+          btn.disabled = true;
+          btn.textContent = 'Sending…';
 
-    window.location.href = mailto;
+          data.action = 'submitEmployerJob';
+          data.fileData = null;
+          data.fileName = null;
 
-    setTimeout(function () {
-      alert('✅ Your email app will open. Please send the message.');
-      form.reset();
-    }, 600);
-  });
+          var empFileEl = document.getElementById('empFile');
+
+          function sendNow() {
+            fetch(url, {
+              method: 'POST',
+              body: JSON.stringify(data),
+              headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+            })
+              .then(function (r) { return r.json(); })
+              .then(function (res) {
+                if (res && res.ok) {
+                  empForm.reset();
+                  btn.disabled = false;
+                  btn.textContent = origText;
+                  toast('✅ Received! We will contact you within 24 hours.');
+                } else {
+                  throw new Error((res && res.error) || 'Submission failed');
+                }
+              })
+              .catch(function (err) {
+                btn.disabled = false;
+                btn.textContent = origText;
+                toast('⚠️ ' + (err.message || 'Please email rajesh@raveone.in'));
+              });
+          }
+
+          if (empFileEl && empFileEl.files && empFileEl.files.length) {
+            var jdFile = empFileEl.files[0];
+            if (jdFile.size > 5 * 1024 * 1024) {
+              btn.disabled = false;
+              btn.textContent = origText;
+              return toast('JD file must be under 5 MB.');
+            }
+            readAsBase64(jdFile, function (b64) {
+              data.fileData = b64;
+              data.fileName = jdFile.name;
+              sendNow();
+            });
+          } else {
+            sendNow();
+          }
+        });
+      }
+    } catch (e) { console.error('Employer form error:', e); }
+
+    /* -------- 3C: CONTACT (mailto — simplest) -------- */
+    try {
+      var ctForm = document.getElementById('contactForm');
+      if (ctForm) {
+        ctForm.addEventListener('submit', function (e) {
+          e.preventDefault();
+          var name    = v('ctName').trim();
+          var phone   = v('ctPhone').trim();
+          var email   = v('ctEmail').trim();
+          var subject = v('ctSubject');
+          var message = v('ctMessage').trim();
+
+          if (!name || !phone || !email || !subject || !message) {
+            return toast('Please fill all required fields.');
+          }
+
+          var body =
+            'Name: ' + name + '\n' +
+            'Phone: ' + phone + '\n' +
+            'Email: ' + email + '\n\n' + message;
+
+          window.location.href = 'mailto:rajesh@raveone.in' +
+            '?subject=' + encodeURIComponent('[Careers] ' + subject) +
+            '&body=' + encodeURIComponent(body);
+
+          setTimeout(function () {
+            toast('✅ Your email app will open. Please send the message.');
+            ctForm.reset();
+          }, 600);
+        });
+      }
+    } catch (e) { console.error('Contact form error:', e); }
+  }
+
+  // Bind forms after everything loaded (app.js sets window.RAVEONE_API_URL)
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bindForms);
+  } else {
+    // Small delay to ensure app.js has run
+    setTimeout(bindForms, 50);
+  }
+
 })();
 </script>
-
 </body>
 </html>
