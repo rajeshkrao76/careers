@@ -17,7 +17,6 @@
   <meta property="og:image" content="https://careers.raveone.in/assets/og-image.png">
 
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231A365D'%3E%3Cpath d='M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6' stroke='white' stroke-width='2'/%3E%3C/svg%3E">
-  <link rel="apple-touch-icon" href="assets/logo-192.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -70,10 +69,10 @@
     </nav>
 
     <div class="header-actions">
-  <button class="mobile-toggle" id="mobileToggle" aria-label="Open menu" aria-expanded="false">
-    <span></span><span></span><span></span>
-  </button>
-</div>
+      <button class="mobile-toggle" id="mobileToggle" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
 
   </div>
 </header>
@@ -191,11 +190,7 @@
           <div class="process-num">1</div>
           <div class="process-body">
             <h3>Discovery &amp; Role Definition</h3>
-            <p>
-              We start with a detailed call with the hiring manager. We document the
-              technical requirements, team structure, cultural fit, and success
-              metrics. If the JD needs refinement, we help.
-            </p>
+            <p>We start with a detailed call with the hiring manager. We document the technical requirements, team structure, cultural fit, and success metrics. If the JD needs refinement, we help.</p>
             <div class="process-meta">⏱ 1–2 days</div>
           </div>
         </li>
@@ -204,11 +199,7 @@
           <div class="process-num">2</div>
           <div class="process-body">
             <h3>Sourcing &amp; Screening</h3>
-            <p>
-              We source from Naukri, Shine, PitchNhire, LinkedIn, our internal
-              database, and referrals. Every candidate is pre-screened against the
-              role — no bulk forwarding.
-            </p>
+            <p>We source from Naukri, Shine, PitchNhire, LinkedIn, our internal database, and referrals. Every candidate is pre-screened against the role — no bulk forwarding.</p>
             <div class="process-meta">⏱ 3–5 days</div>
           </div>
         </li>
@@ -217,10 +208,7 @@
           <div class="process-num">3</div>
           <div class="process-body">
             <h3>Shortlist &amp; Submission</h3>
-            <p>
-              We submit a curated shortlist of 3–5 candidates with full executive
-              profiles, resume, fit assessment, and availability. You receive ready-to-interview candidates.
-            </p>
+            <p>We submit a curated shortlist of 3–5 candidates with full executive profiles, resume, fit assessment, and availability. You receive ready-to-interview candidates.</p>
             <div class="process-meta">⏱ 1 day after screening</div>
           </div>
         </li>
@@ -229,11 +217,7 @@
           <div class="process-num">4</div>
           <div class="process-body">
             <h3>Interview Coordination</h3>
-            <p>
-              We schedule interviews with the candidate, client, and panel.
-              Reminders go out 24 hours and 2 hours before. We stay on top of
-              confirmations and reschedules.
-            </p>
+            <p>We schedule interviews with the candidate, client, and panel. Reminders go out 24 hours and 2 hours before. We stay on top of confirmations and reschedules.</p>
             <div class="process-meta">⏱ Within 2 days of shortlist</div>
           </div>
         </li>
@@ -242,10 +226,7 @@
           <div class="process-num">5</div>
           <div class="process-body">
             <h3>Offer &amp; Negotiation</h3>
-            <p>
-              We coordinate offer letters, salary negotiation, and notice period
-              discussions. We keep both sides aligned to close the offer smoothly.
-            </p>
+            <p>We coordinate offer letters, salary negotiation, and notice period discussions. We keep both sides aligned to close the offer smoothly.</p>
             <div class="process-meta">⏱ 3–7 days</div>
           </div>
         </li>
@@ -254,10 +235,7 @@
           <div class="process-num">6</div>
           <div class="process-body">
             <h3>Joining &amp; Follow-up</h3>
-            <p>
-              We follow up until the candidate joins — and beyond. Our post-joining
-              check-ins ensure both candidate and client are satisfied after 30 days.
-            </p>
+            <p>We follow up until the candidate joins — and beyond. Our post-joining check-ins ensure both candidate and client are satisfied after 30 days.</p>
             <div class="process-meta">⏱ Ongoing</div>
           </div>
         </li>
@@ -268,8 +246,7 @@
         <div>
           <h3>Our Commitment</h3>
           <p>
-            <strong>Median time-to-fill: under 20 days.</strong>
-            <br>
+            <strong>Median time-to-fill: under 20 days.</strong><br>
             If a placed candidate leaves within 90 days, we replace them at no cost.
           </p>
         </div>
@@ -385,7 +362,7 @@
           Share your requirement and we'll get back within 24 hours. No retainer for most roles.
         </p>
 
-        <form id="employerForm" class="page-form">
+        <form id="employerForm" class="page-form" novalidate>
           <div class="form-row form-row-2">
             <div class="form-field">
               <label class="form-label" for="empCompany">Company Name <span class="req">*</span></label>
@@ -430,24 +407,18 @@
             </div>
           </div>
 
-        
-          </div>
           <div class="form-field">
             <label class="form-label" for="empJD">Job Description / Requirements <span class="req">*</span></label>
             <textarea id="empJD" class="form-input form-textarea" rows="5" required
                       placeholder="Paste the JD or list the key responsibilities and requirements."></textarea>
           </div>
 
-          <!-- 👇 PASTE THIS BLOCK HERE 👇 -->
           <div class="form-field">
             <label class="form-label" for="empFile">Attach JD (optional PDF/DOC)</label>
             <input id="empFile" type="file" accept=".pdf,.doc,.docx,.txt"
-              class="form-input"
-              style="padding:8px;">
+                   class="form-input" style="padding:8px;">
           </div>
-          <!-- 👆 END OF NEW BLOCK 👆 -->
 
-      
           <button type="submit" class="btn-primary" id="empSubmitBtn">
             Send Requirement
           </button>
@@ -498,7 +469,7 @@
           </div>
         </div>
 
-        <form id="talentPoolForm" class="page-form">
+        <form id="talentPoolForm" class="page-form" novalidate>
           <div class="form-row form-row-2">
             <div class="form-field">
               <label class="form-label" for="tpName">Full Name <span class="req">*</span></label>
@@ -555,24 +526,13 @@
           </div>
 
           <div class="form-field">
-            <label class="form-label">Resume Upload <span class="req">*</span></label>
-            <label class="upload-zone" for="tpResume" id="tpUploadZone">
-              <input id="tpResume" type="file" class="upload-input"
-                     accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" required>
-              <div class="upload-icon" aria-hidden="true">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                     stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                  <polyline points="17 8 12 3 7 8"/>
-                  <line x1="12" y1="3" x2="12" y2="15"/>
-                </svg>
-              </div>
-              <div class="upload-text">
-                <span class="upload-title">Choose file or drag &amp; drop</span>
-                <span class="upload-sub">PDF, DOC, DOCX · max 5 MB</span>
-              </div>
-              <div class="upload-file" id="tpUploadFileName"></div>
-            </label>
+            <label class="form-label" for="tpResume">Resume Upload <span class="req">*</span></label>
+            <input id="tpResume" type="file"
+                   accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                   required
+                   style="display:block;width:100%;padding:12px;border:2px dashed #CBD5E1;border-radius:10px;background:#F8FAFC;font-size:13px;cursor:pointer;box-sizing:border-box;">
+            <div id="tpFileName" style="margin-top:8px;font-size:12px;font-weight:700;color:#16A34A;"></div>
+            <div style="margin-top:4px;font-size:11px;color:#64748B;">PDF, DOC, DOCX · max 5 MB</div>
           </div>
 
           <button type="submit" class="btn-primary" id="tpSubmitBtn">
@@ -601,9 +561,8 @@
     </div>
   </section>
 
-  
   <!-- ======================================================================
-       PAGE 6: CONTACT
+       PAGE 5: CONTACT
        ====================================================================== -->
   <section id="page-contact" class="page-section">
     <div class="container page-narrow">
@@ -660,7 +619,7 @@
 
       <div class="page-rich contact-form-wrap">
         <h2>Send us a message</h2>
-        <form id="contactForm" class="page-form">
+        <form id="contactForm" class="page-form" novalidate>
           <div class="form-row form-row-2">
             <div class="form-field">
               <label class="form-label" for="ctName">Your Name <span class="req">*</span></label>
@@ -705,7 +664,7 @@
   </section>
 
   <!-- ======================================================================
-       PAGE 7: TERMS & CONDITIONS
+       PAGE 6: TERMS & CONDITIONS
        ====================================================================== -->
   <section id="page-terms" class="page-section">
     <div class="container page-narrow">
@@ -745,6 +704,7 @@
           <li>You confirm you have the legal right to work in the location of the job.</li>
           <li>You are solely responsible for the accuracy of your resume and application.</li>
           <li>You consent to Raveone sharing your profile with client companies for the purpose of recruitment.</li>
+          <li>Any communication regarding an application submitted through this website should be directed to Raveone Consultants, not directly to the client company.</li>
         </ul>
 
         <h2>4. Employer / Client Responsibilities</h2>
@@ -800,7 +760,7 @@
   </section>
 
   <!-- ======================================================================
-       PAGE 8: PRIVACY POLICY
+       PAGE 7: PRIVACY POLICY
        ====================================================================== -->
   <section id="page-privacy" class="page-section">
     <div class="container page-narrow">
@@ -929,7 +889,7 @@
         <li><a href="index.html#jobs">Browse Jobs</a></li>
         <li><a href="pages.html?page=submit-cv">Submit CV</a></li>
         <li><a href="pages.html?page=process">Our Process</a></li>
-        </ul>
+      </ul>
     </div>
 
     <div class="footer-col">
@@ -972,9 +932,9 @@
 (function () {
   'use strict';
 
-  /* =========================================================
-     1. ROUTER — runs immediately, always shows a page
-     ========================================================= */
+  /* ==========================================================
+     1. ROUTER
+     ========================================================== */
   var PAGES = {
     'about':      { title: 'About Us — Raveone Careers',            crumb: 'About Us' },
     'process':    { title: 'Our Process — Raveone Careers',         crumb: 'Our Process' },
@@ -1002,9 +962,10 @@
       var sectionId = 'page-' + (PAGES[pageKey] ? pageKey : 'about');
       var section = document.getElementById(sectionId);
 
-      document.querySelectorAll('#pageContent > section').forEach(function (s) {
-        s.classList.remove('active');
-      });
+      var sections = document.querySelectorAll('#pageContent > section');
+      for (var i = 0; i < sections.length; i++) {
+        sections[i].classList.remove('active');
+      }
       if (section) section.classList.add('active');
 
       document.title = page.title;
@@ -1015,14 +976,13 @@
       var meta = document.getElementById('metaDescription');
       if (meta) meta.setAttribute('content', page.title);
 
-      document.querySelectorAll('.main-nav .nav-link').forEach(function (a) {
-        a.classList.toggle('active', a.getAttribute('data-page') === pageKey);
-      });
+      var links = document.querySelectorAll('.main-nav .nav-link');
+      for (var j = 0; j < links.length; j++) {
+        links[j].classList.toggle('active', links[j].getAttribute('data-page') === pageKey);
+      }
 
       window.scrollTo({ top: 0, behavior: 'instant' });
-    } catch (err) {
-      console.error('Router error:', err);
-    }
+    } catch (err) { console.error('Router error:', err); }
   }
 
   // Footer year
@@ -1031,16 +991,15 @@
     if (y) y.textContent = new Date().getFullYear();
   } catch (e) {}
 
-  // Run router NOW
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', runRouter);
   } else {
     runRouter();
   }
 
-  /* =========================================================
+  /* ==========================================================
      2. HELPERS
-     ========================================================= */
+     ========================================================== */
   function apiUrl() {
     if (window.RAVEONE_API_URL) return window.RAVEONE_API_URL;
     if (window.API_URL) return window.API_URL;
@@ -1051,11 +1010,12 @@
     var t = document.createElement('div');
     t.style.cssText =
       'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);' +
-      'background:#0F172A;color:#fff;padding:10px 20px;border-radius:999px;' +
-      'font-size:13px;font-weight:600;z-index:9999;box-shadow:0 10px 30px rgba(0,0,0,.2);';
+      'background:#0F172A;color:#fff;padding:12px 24px;border-radius:999px;' +
+      'font-size:13px;font-weight:600;z-index:99999;' +
+      'box-shadow:0 10px 30px rgba(0,0,0,.3);max-width:90vw;text-align:center;';
     t.textContent = msg;
     document.body.appendChild(t);
-    setTimeout(function () { t.remove(); }, 3200);
+    setTimeout(function () { t.remove(); }, 3500);
   }
 
   function validEmail(v) {
@@ -1081,231 +1041,217 @@
     return el ? el.value : '';
   }
 
-  /* =========================================================
-     3. FORM BINDINGS — run after DOM + app.js loaded
-     ========================================================= */
-  function bindForms() {
+  /* ==========================================================
+     3. TALENT POOL FORM (Submit CV)
+     ========================================================== */
+  (function () {
+    var form = document.getElementById('talentPoolForm');
+    if (!form) return;
 
-    /* -------- 3A: TALENT POOL (Submit CV) -------- */
-    try {
-      var tpForm = document.getElementById('talentPoolForm');
-      if (tpForm) {
-        tpForm.addEventListener('submit', function (e) {
-          e.preventDefault();
-          var btn = document.getElementById('tpSubmitBtn');
-          if (!btn) return;
+    var fileEl = document.getElementById('tpResume');
+    var nameEl = document.getElementById('tpFileName');
 
-          var name        = v('tpName').trim();
-          var phone       = v('tpPhone').replace(/[^\d]/g, '');
-          var email       = v('tpEmail').trim();
-          var location    = v('tpLocation').trim();
-          var education   = v('tpEducation').trim();
-          var totalExp    = v('tpTotalExp').trim();
-          var currentCtc  = v('tpCurrentCtc').trim();
-          var expectedCtc = v('tpExpectedCtc').trim();
-          var notice      = v('tpNotice').trim();
-          var skills      = v('tpSkills').trim();
-          var fileEl      = document.getElementById('tpResume');
-
-          // Show chosen filename + highlight zone
-if (fileEl) {
-  fileEl.addEventListener('change', function () {
-    var zone = document.getElementById('tpUploadZone');
-    var name = document.getElementById('tpUploadFileName');
-    if (fileEl.files && fileEl.files.length) {
-      if (name) name.textContent = '✓ ' + fileEl.files[0].name;
-      if (zone) zone.classList.add('filled');
-    } else {
-      if (name) name.textContent = '';
-      if (zone) zone.classList.remove('filled');
+    if (fileEl && nameEl) {
+      fileEl.addEventListener('change', function () {
+        if (fileEl.files && fileEl.files.length) {
+          nameEl.textContent = '✓ ' + fileEl.files[0].name;
+        } else {
+          nameEl.textContent = '';
+        }
+      });
     }
-  });
-}
 
-          if (!name || name.length < 2) return toast('Please enter your full name.');
-          if (!validEmail(email)) return toast('Please enter a valid email.');
-          if (!validPhone(phone)) return toast('Enter a valid 10-digit Indian mobile number.');
-          if (!totalExp) return toast('Total experience is required.');
-          if (!skills) return toast('Key skills are required.');
-          if (!fileEl || !fileEl.files || !fileEl.files.length) return toast('Please upload your resume.');
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var btn = document.getElementById('tpSubmitBtn');
 
-          var f = fileEl.files[0];
-          if (f.size > 5 * 1024 * 1024) return toast('Resume must be under 5 MB.');
-          var ext = f.name.substring(f.name.lastIndexOf('.')).toLowerCase();
-          if (['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png'].indexOf(ext) === -1) {
-            return toast('Resume must be PDF, DOC, DOCX, JPG, or PNG.');
-          }
+      var name        = v('tpName').trim();
+      var phone       = v('tpPhone').replace(/[^\d]/g, '');
+      var email       = v('tpEmail').trim();
+      var location    = v('tpLocation').trim();
+      var education   = v('tpEducation').trim();
+      var totalExp    = v('tpTotalExp').trim();
+      var currentCtc  = v('tpCurrentCtc').trim();
+      var expectedCtc = v('tpExpectedCtc').trim();
+      var notice      = v('tpNotice').trim();
+      var skills      = v('tpSkills').trim();
 
-          var url = apiUrl();
-          if (!url) return toast('Config error — please email CV to rajesh@raveone.in');
+      if (!name || name.length < 2) return toast('Please enter your full name.');
+      if (!validEmail(email)) return toast('Please enter a valid email.');
+      if (!validPhone(phone)) return toast('Enter a valid 10-digit mobile number.');
+      if (!totalExp) return toast('Total experience is required.');
+      if (!skills) return toast('Key skills are required.');
+      if (!fileEl || !fileEl.files || !fileEl.files.length) return toast('Please upload your resume.');
 
-          var origText = btn.textContent;
-          btn.disabled = true;
-          btn.textContent = 'Submitting…';
+      var file = fileEl.files[0];
+      if (file.size > 5 * 1024 * 1024) return toast('Resume must be under 5 MB.');
 
-          readAsBase64(f, function (b64) {
-            var payload = {
-              action: 'submitTalentPool',
-              name: name, email: email, phone: phone,
-              location: location, education: education,
-              totalExp: totalExp, currentCtc: currentCtc,
-              expectedCtc: expectedCtc, noticePeriod: notice,
-              skills: skills,
-              fileData: b64, fileName: f.name
-            };
+      var url = apiUrl();
+      if (!url) return toast('Config error — please email CV to rajesh@raveone.in');
 
-            fetch(url, {
-              method: 'POST',
-              body: JSON.stringify(payload),
-              headers: { 'Content-Type': 'text/plain;charset=utf-8' }
-            })
-              .then(function (r) { return r.json(); })
-              .then(function (res) {
-                if (res && res.ok) {
-                  tpForm.hidden = true;
-                  var s = document.getElementById('tpSuccess');
-                  if (s) s.hidden = false;
-                } else {
-                  throw new Error((res && res.error) || 'Submission failed');
-                }
-              })
-              .catch(function (err) {
-                btn.disabled = false;
-                btn.textContent = origText;
-                toast('⚠️ ' + (err.message || 'Please email CV to rajesh@raveone.in'));
-              });
+      var origText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = 'Submitting...';
+
+      readAsBase64(file, function (b64) {
+        var payload = {
+          action: 'submitTalentPool',
+          name: name, email: email, phone: phone,
+          location: location, education: education,
+          totalExp: totalExp, currentCtc: currentCtc,
+          expectedCtc: expectedCtc, noticePeriod: notice,
+          skills: skills,
+          fileData: b64, fileName: file.name
+        };
+
+        fetch(url, {
+          method: 'POST',
+          body: JSON.stringify(payload),
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+        })
+          .then(function (r) { return r.json(); })
+          .then(function (res) {
+            if (res && res.ok) {
+              form.hidden = true;
+              var s = document.getElementById('tpSuccess');
+              if (s) s.hidden = false;
+              window.scrollTo({ top: 200, behavior: 'smooth' });
+            } else {
+              throw new Error((res && res.error) || 'Submission failed');
+            }
+          })
+          .catch(function (err) {
+            btn.disabled = false;
+            btn.textContent = origText;
+            toast('⚠️ ' + (err.message || 'Please email CV to rajesh@raveone.in'));
           });
-        });
+      });
+    });
+  })();
+
+  /* ==========================================================
+     4. EMPLOYER FORM (Post a Job)
+     ========================================================== */
+  (function () {
+    var form = document.getElementById('employerForm');
+    if (!form) return;
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var btn = document.getElementById('empSubmitBtn');
+
+      var data = {
+        company:   v('empCompany').trim(),
+        contact:   v('empContact').trim(),
+        email:     v('empEmail').trim(),
+        phone:     v('empPhone').replace(/[^\d]/g, ''),
+        role:      v('empRole').trim(),
+        location:  v('empLocation').trim(),
+        salaryMin: v('empSalaryMin').trim(),
+        salaryMax: v('empSalaryMax').trim(),
+        jd:        v('empJD').trim()
+      };
+
+      if (!data.company || !data.contact || !data.email || !data.phone ||
+          !data.role || !data.location || !data.jd) {
+        return toast('Please fill all required fields.');
       }
-    } catch (e) { console.error('Talent pool form error:', e); }
+      if (!validEmail(data.email)) return toast('Please enter a valid email.');
+      if (!validPhone(data.phone)) return toast('Enter a valid 10-digit mobile number.');
 
-    /* -------- 3B: EMPLOYER (Post a Job) -------- */
-    try {
-      var empForm = document.getElementById('employerForm');
-      if (empForm) {
-        empForm.addEventListener('submit', function (e) {
-          e.preventDefault();
-          var btn = document.getElementById('empSubmitBtn');
-          if (!btn) return;
+      var url = apiUrl();
+      if (!url) return toast('Config error — please email rajesh@raveone.in');
 
-          var data = {
-            company:   v('empCompany').trim(),
-            contact:   v('empContact').trim(),
-            email:     v('empEmail').trim(),
-            phone:     v('empPhone').replace(/[^\d]/g, ''),
-            role:      v('empRole').trim(),
-            location:  v('empLocation').trim(),
-            salaryMin: v('empSalaryMin').trim(),
-            salaryMax: v('empSalaryMax').trim(),
-            jd:        v('empJD').trim()
-          };
+      var origText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
 
-          if (!data.company || !data.contact || !data.email || !data.phone ||
-              !data.role || !data.location || !data.jd) {
-            return toast('Please fill all required fields.');
-          }
-          if (!validEmail(data.email)) return toast('Please enter a valid email.');
-          if (!validPhone(data.phone)) return toast('Enter a valid 10-digit Indian mobile number.');
+      data.action = 'submitEmployerJob';
+      data.fileData = null;
+      data.fileName = null;
 
-          var url = apiUrl();
-          if (!url) return toast('Config error — please email rajesh@raveone.in');
+      var empFileEl = document.getElementById('empFile');
 
-          var origText = btn.textContent;
-          btn.disabled = true;
-          btn.textContent = 'Sending…';
-
-          data.action = 'submitEmployerJob';
-          data.fileData = null;
-          data.fileName = null;
-
-          var empFileEl = document.getElementById('empFile');
-
-          function sendNow() {
-            fetch(url, {
-              method: 'POST',
-              body: JSON.stringify(data),
-              headers: { 'Content-Type': 'text/plain;charset=utf-8' }
-            })
-              .then(function (r) { return r.json(); })
-              .then(function (res) {
-                if (res && res.ok) {
-                  empForm.reset();
-                  btn.disabled = false;
-                  btn.textContent = origText;
-                  toast('✅ Received! We will contact you within 24 hours.');
-                } else {
-                  throw new Error((res && res.error) || 'Submission failed');
-                }
-              })
-              .catch(function (err) {
-                btn.disabled = false;
-                btn.textContent = origText;
-                toast('⚠️ ' + (err.message || 'Please email rajesh@raveone.in'));
-              });
-          }
-
-          if (empFileEl && empFileEl.files && empFileEl.files.length) {
-            var jdFile = empFileEl.files[0];
-            if (jdFile.size > 5 * 1024 * 1024) {
+      function sendNow() {
+        fetch(url, {
+          method: 'POST',
+          body: JSON.stringify(data),
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+        })
+          .then(function (r) { return r.json(); })
+          .then(function (res) {
+            if (res && res.ok) {
+              form.reset();
               btn.disabled = false;
               btn.textContent = origText;
-              return toast('JD file must be under 5 MB.');
+              toast('✅ Received! We will contact you within 24 hours.');
+            } else {
+              throw new Error((res && res.error) || 'Submission failed');
             }
-            readAsBase64(jdFile, function (b64) {
-              data.fileData = b64;
-              data.fileName = jdFile.name;
-              sendNow();
-            });
-          } else {
-            sendNow();
-          }
-        });
+          })
+          .catch(function (err) {
+            btn.disabled = false;
+            btn.textContent = origText;
+            toast('⚠️ ' + (err.message || 'Please email rajesh@raveone.in'));
+          });
       }
-    } catch (e) { console.error('Employer form error:', e); }
 
-    /* -------- 3C: CONTACT (mailto — simplest) -------- */
-    try {
-      var ctForm = document.getElementById('contactForm');
-      if (ctForm) {
-        ctForm.addEventListener('submit', function (e) {
-          e.preventDefault();
-          var name    = v('ctName').trim();
-          var phone   = v('ctPhone').trim();
-          var email   = v('ctEmail').trim();
-          var subject = v('ctSubject');
-          var message = v('ctMessage').trim();
-
-          if (!name || !phone || !email || !subject || !message) {
-            return toast('Please fill all required fields.');
-          }
-
-          var body =
-            'Name: ' + name + '\n' +
-            'Phone: ' + phone + '\n' +
-            'Email: ' + email + '\n\n' + message;
-
-          window.location.href = 'mailto:rajesh@raveone.in' +
-            '?subject=' + encodeURIComponent('[Careers] ' + subject) +
-            '&body=' + encodeURIComponent(body);
-
-          setTimeout(function () {
-            toast('✅ Your email app will open. Please send the message.');
-            ctForm.reset();
-          }, 600);
+      if (empFileEl && empFileEl.files && empFileEl.files.length) {
+        var jdFile = empFileEl.files[0];
+        if (jdFile.size > 5 * 1024 * 1024) {
+          btn.disabled = false;
+          btn.textContent = origText;
+          return toast('JD file must be under 5 MB.');
+        }
+        readAsBase64(jdFile, function (b64) {
+          data.fileData = b64;
+          data.fileName = jdFile.name;
+          sendNow();
         });
+      } else {
+        sendNow();
       }
-    } catch (e) { console.error('Contact form error:', e); }
-  }
+    });
+  })();
 
-  // Bind forms after everything loaded (app.js sets window.RAVEONE_API_URL)
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', bindForms);
-  } else {
-    // Small delay to ensure app.js has run
-    setTimeout(bindForms, 50);
-  }
+  /* ==========================================================
+     5. CONTACT FORM (mailto)
+     ========================================================== */
+  (function () {
+    var form = document.getElementById('contactForm');
+    if (!form) return;
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      var name    = v('ctName').trim();
+      var phone   = v('ctPhone').trim();
+      var email   = v('ctEmail').trim();
+      var subject = v('ctSubject');
+      var message = v('ctMessage').trim();
+
+      if (!name || !phone || !email || !subject || !message) {
+        return toast('Please fill all required fields.');
+      }
+
+      var body =
+        'Name: ' + name + '\n' +
+        'Phone: ' + phone + '\n' +
+        'Email: ' + email + '\n\n' + message;
+
+      window.location.href = 'mailto:rajesh@raveone.in' +
+        '?subject=' + encodeURIComponent('[Careers] ' + subject) +
+        '&body=' + encodeURIComponent(body);
+
+      setTimeout(function () {
+        toast('✅ Your email app will open. Please send the message.');
+        form.reset();
+      }, 600);
+    });
+  })();
 
 })();
 </script>
+
 </body>
 </html>
