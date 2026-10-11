@@ -525,16 +525,26 @@
                    placeholder="e.g. AutoCAD, CNC Programming, GD&T">
           </div>
 
-          <div class="form-field">
-            <label class="form-label" for="tpResume">Resume Upload <span class="req">*</span></label>
-            <input id="tpResume" type="file"
-                   accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                   required
-                   style="display:block;width:100%;padding:12px;border:2px dashed #CBD5E1;border-radius:10px;background:#F8FAFC;font-size:13px;cursor:pointer;box-sizing:border-box;">
-            <div id="tpFileName" style="margin-top:8px;font-size:12px;font-weight:700;color:#16A34A;"></div>
-            <div style="margin-top:4px;font-size:11px;color:#64748B;">PDF, DOC, DOCX · max 5 MB</div>
-          </div>
-
+         <div class="form-field">
+  <label class="form-label">Resume Upload <span class="req">*</span></label>
+  <label class="upload-zone" for="tpResume" id="tpUploadZone">
+    <input id="tpResume" type="file" class="upload-input"
+           accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" required>
+    <div class="upload-icon" aria-hidden="true">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="17 8 12 3 7 8"/>
+        <line x1="12" y1="3" x2="12" y2="15"/>
+      </svg>
+    </div>
+    <div class="upload-text">
+      <span class="upload-title">Choose file or drag &amp; drop</span>
+      <span class="upload-sub">PDF, DOC, DOCX · max 5 MB</span>
+    </div>
+    <div class="upload-file" id="tpFileName"></div>
+  </label>
+</div>
           <button type="submit" class="btn-primary" id="tpSubmitBtn">
             Join Talent Pool
           </button>
@@ -1051,12 +1061,15 @@
     var fileEl = document.getElementById('tpResume');
     var nameEl = document.getElementById('tpFileName');
 
-    if (fileEl && nameEl) {
+       if (fileEl && nameEl) {
       fileEl.addEventListener('change', function () {
+        var zone = document.getElementById('tpUploadZone');
         if (fileEl.files && fileEl.files.length) {
           nameEl.textContent = '✓ ' + fileEl.files[0].name;
+          if (zone) zone.classList.add('filled');
         } else {
           nameEl.textContent = '';
+          if (zone) zone.classList.remove('filled');
         }
       });
     }
