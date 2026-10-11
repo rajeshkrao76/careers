@@ -1628,7 +1628,11 @@ function raveoneBoot() {
   if (page === "index") {
     IndexPage.init();
   } else if (page === "job") {
-    JobDetail.init();
+    // Guard: prevent double-init from inline script in job.html
+    if (!window.__jobDetailInitialized) {
+      window.__jobDetailInitialized = true;
+      JobDetail.init();
+    }
   }
 }
 
