@@ -86,15 +86,6 @@ function daysAgo(dateVal) {
   return Math.floor(diff / 30) + " months ago";
 }
 
-/**
- * Format date to "12 Oct 2026".
- */
-function formatDate(dateVal) {
-  if (!dateVal) return "";
-  const d = dateVal instanceof Date ? dateVal : new Date(dateVal);
-  if (isNaN(d.getTime())) return String(dateVal);
-  return d.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
-}
 
 /**
  * Extract min years from experience string.
