@@ -15,7 +15,7 @@
 /* ==========================================================================
    CONFIG — EDIT THIS BEFORE DEPLOY
    ========================================================================== */
-const API_URL = "https://script.google.com/macros/s/AKfycbw6Fa0O8yQppIzJ_b2rHyYnVAhwojZYd91-QAxuj0eVnU3be-qXrwzKfPmXNvxjOmLj/exec";
+const API_URL = "const API_URL = "https://script.google.com/macros/s/AKfycbzSX8aT_Vecff3ZJinj0wt-DU72NH9jmerdyN7DywmGlX401jssm87ZHS6QUnP8qG0y/exec";";
 // Replace YOUR_DEPLOYMENT_ID with your actual Apps Script Web App deployment ID.
 
 /* ==========================================================================
