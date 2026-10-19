@@ -16,7 +16,7 @@
 /* ==========================================================================
    CONFIG — EDIT THIS BEFORE DEPLOY
    ========================================================================== */
-const API_URL = "const API_URL = "https://script.google.com/macros/s/AKfycbzSX8aT_Vecff3ZJinj0wt-DU72NH9jmerdyN7DywmGlX401jssm87ZHS6QUnP8qG0y/exec";";
+const API_URL = "https://script.google.com/macros/s/AKfycbzSX8aT_Vecff3ZJinj0wt-DU72NH9jmerdyN7DywmGlX401jssm87ZHS6QUnP8qG0y/exec";
 
 /* ==========================================================================
    CONSTANTS
@@ -57,6 +57,9 @@ const STATE = {
    UTILITIES
    ========================================================================== */
 
+/**
+ * Escape HTML — safe insertion into DOM.
+ */
 function esc(s) {
   if (s === null || s === undefined) return "";
   return String(s)
@@ -67,6 +70,9 @@ function esc(s) {
     .replace(/'/g, "&#039;");
 }
 
+/**
+ * Parse any date — returns "x days ago" / "today" / "yesterday".
+ */
 function daysAgo(dateVal) {
   if (!dateVal) return "";
   const d = dateVal instanceof Date ? dateVal : new Date(dateVal);
@@ -80,17 +86,97 @@ function daysAgo(dateVal) {
   return Math.floor(diff / 30) + " months ago";
 }
 
+/**
+ * Clean up an experience value coming from the Jobs sheet.
+ *   "Fresher" / "Freshers"   →  "0"
+ *   "1 Yrs" / "5 Years"      →  "1" / "5"
+ *   "10 yrs"                 →  "10"
+ *   5 (number)               →  "5"
+ *   "" / null / undefined    →  ""
+ */
+function cleanExp(v) {
+  if (v === null || v === undefined) return "";
+  const s = String(v).trim();
+  if (!s) return "";
+  if (/^freshers?$/i.test(s)) return "0";
+  // strip "Yrs", "Years", "yrs." suffixes then keep digits/decimal only
+  return s.replace(/\s*(yrs?|years?)\.?$/i, "").replace(/[^\d.]/g, "").trim();
+}
+
+/**
+ * Format an experience range for display:
+ *   (1, 2)        → "1–2 yrs"
+ *   (0, 0)        → "0 yrs"  (fresher)
+ *   ("Fresher","")→ "0 yrs"
+ *   (5, 5)        → "5 yrs"
+ *   (0, "")       → "0+ yrs"
+ *   ("", "")      → "Any"
+ */
+function formatExpDisplay(min, max) {
+  const minC = cleanExp(min);
+  const maxC = cleanExp(max);
+  if (!minC && !maxC) return "Any";
+  if (minC === maxC) return minC + " yrs";
+  if (minC && maxC) return minC + "–" + maxC + " yrs";
+  if (minC) return minC + "+ yrs";
+  return "Up to " + maxC + " yrs";
+}
+
+/**
+ * Parse min years from experience string — used for filtering.
+ *   "Fresher" → 0
+ *   "1 Yrs"   → 1
+ *   5         → 5
+ */
 function parseYears(v) {
-  const n = parseFloat(String(v || "").replace(/[^\d.]/g, ""));
+  if (v === null || v === undefined) return 0;
+  const s = String(v).trim();
+  if (!s) return 0;
+  if (/^freshers?$/i.test(s)) return 0;
+  const n = parseFloat(s.replace(/\s*(yrs?|years?)\.?$/i, "").replace(/[^\d.]/g, ""));
   return isNaN(n) ? 0 : n;
 }
 
+/**
+ * Clean salary display — collapse multiple ₹ into one.
+ *   "₹₹18,870.31 – ₹₹18,870.31" → "₹18,870.31 – ₹18,870.31"
+ */
+function cleanSalary(v) {
+  if (!v) return "";
+  return String(v).replace(/₹+/g, "₹").trim();
+}
+
+/**
+ * Clean a single skill chip — strip newlines, collapse whitespace, truncate.
+ *   "About the Company:\nArphi Electronics..." → "About the Company: Arphi…"
+ */
+function cleanSkill(s) {
+  if (!s) return "";
+  const t = String(s).replace(/\s+/g, " ").trim();
+  if (t.length < 4) return "";
+  return t.length > 45 ? t.slice(0, 42) + "…" : t;
+}
+
+/**
+ * Collapse all whitespace and trim — used for title, company, description.
+ */
+function cleanText(s) {
+  if (!s) return "";
+  return String(s).replace(/^\s+|\s+$/g, "").replace(/\s+/g, " ");
+}
+
+/**
+ * Compute salary max for sorting.
+ */
 function salaryMaxInLpa(job) {
   const max = parseFloat(String(job.maxSalary || job.minSalary || "").replace(/[^\d.]/g, ""));
   if (isNaN(max)) return 0;
   return max;
 }
 
+/**
+ * Debounce helper.
+ */
 function debounce(fn, ms) {
   let t;
   return function () {
@@ -100,6 +186,9 @@ function debounce(fn, ms) {
   };
 }
 
+/**
+ * Safe localStorage wrappers.
+ */
 const Store = {
   get: function (key, fallback) {
     try {
@@ -116,22 +205,35 @@ const Store = {
    API LAYER
    ========================================================================== */
 const API = {
+  /**
+   * Normalize a job object from the API.
+   * Skills / benefits → arrays; boolean flags normalized.
+   */
   normalizeJob: function (j) {
     if (!j) return j;
+
     if (!Array.isArray(j.skills)) {
-      j.skills = String(j.skills || "").split(",").map(function (s) { return s.trim(); }).filter(Boolean);
+      j.skills = String(j.skills || "")
+        .split(",")
+        .map(function (s) { return s.trim(); })
+        .filter(Boolean);
     }
     if (!Array.isArray(j.benefits)) {
-      j.benefits = String(j.benefits || "").split(",").map(function (s) { return s.trim(); }).filter(Boolean);
+      j.benefits = String(j.benefits || "")
+        .split(",")
+        .map(function (s) { return s.trim(); })
+        .filter(Boolean);
     }
+
     const isYes = function (v) {
       if (v === true) return true;
       const s = String(v || "").toLowerCase().trim();
       return s === "yes" || s === "true";
     };
-    j.isUrgent = isYes(j.isUrgent);
+    j.isUrgent   = isYes(j.isUrgent);
     j.isFeatured = isYes(j.isFeatured);
-    j.isRemote = isYes(j.isRemote);
+    j.isRemote   = isYes(j.isRemote);
+
     return j;
   },
 
@@ -290,7 +392,6 @@ const SaveShare = {
       const nowSaved = SaveShare.toggle(jobId);
       update();
       if (nowSaved) {
-        const orig = label ? label.textContent : "";
         if (label) label.textContent = "Saved ✓";
         setTimeout(update, 1200);
       }
@@ -553,7 +654,7 @@ const IndexPage = {
           .filter(Boolean).forEach(function (l) { locSet[l] = (locSet[l] || 0) + 1; });
       }
       if (j.category) catSet[j.category] = (catSet[j.category] || 0) + 1;
-      if (j.company) compSet[j.company] = (compSet[j.company] || 0) + 1;
+      if (j.company)  compSet[j.company] = (compSet[j.company] || 0) + 1;
     });
 
     Object.keys(locSet).sort().forEach(function (l) {
@@ -768,38 +869,61 @@ const IndexPage = {
     }
   },
 
+  /**
+   * Build a job card — robust against messy data from the sheet.
+   */
   buildCard: function (j) {
     const card = document.createElement("a");
     card.className = "job-card";
     card.href = "job.html?job=" + encodeURIComponent(j.jobId);
 
-    const skills = (j.skills || []).slice(0, 3);
-    const moreSkills = (j.skills || []).length - skills.length;
-    const expTxt = (j.minExp || j.maxExp) ? (j.minExp + "–" + j.maxExp + " yrs") : "Any";
+    // Clean up potentially messy fields
+    const title    = cleanText(j.title) || "Untitled Role";
+    const company  = cleanText(j.company) || "Raveone Client";
+    const location = cleanText(j.location) || "India";
+    const jobId    = cleanText(j.jobId);
+
+    // Skills — filter empties, truncate, take first 3
+    const allSkills = (j.skills || []).map(cleanSkill).filter(Boolean);
+    const skills    = allSkills.slice(0, 3);
+    const moreSkills = allSkills.length - skills.length;
+
+    // Experience — normalize "Fresher" / "1 Yrs" / 5
+    const expTxt = formatExpDisplay(j.minExp, j.maxExp);
+
+    // Salary — clean double ₹
+    const salaryTxt = cleanSalary(j.salaryDisplay) || "Not disclosed";
+
+    // Posted date
     const postedTxt = j.postedDate ? daysAgo(j.postedDate) : "";
 
+    // Description — collapse whitespace, truncate cleanly
+    const descRaw = cleanText(j.description || "");
+    const descTxt = descRaw.length > 200 ? descRaw.slice(0, 197) + "…" : descRaw;
+
+    // Badges
     const badges = [];
-    if (j.isUrgent) badges.push('<span class="chip chip-amber">🔥 Urgent</span>');
+    if (j.isUrgent)   badges.push('<span class="chip chip-amber">🔥 Urgent</span>');
     if (j.isFeatured) badges.push('<span class="chip chip-navy">⭐ Featured</span>');
-    if (j.isRemote) badges.push('<span class="chip chip-purple">🌐 Remote</span>');
+    if (j.isRemote)   badges.push('<span class="chip chip-purple">🌐 Remote</span>');
     if (j.positions > 1) badges.push('<span class="chip chip-blue">' + j.positions + ' openings</span>');
 
     card.innerHTML = `
       <div class="job-card-head">
         <div class="job-card-title-wrap">
-          <h3 class="job-card-title">${esc(j.title)}</h3>
+          <h3 class="job-card-title">${esc(title)}</h3>
           <div class="job-card-company">
-            ${esc(j.company || "Raveone Client")}
+            ${esc(company)}
             <span class="dot">•</span>
-            ${esc(j.location || "India")}
+            ${esc(location)}
           </div>
         </div>
-        <span class="job-card-id">${esc(j.jobId)}</span>
+        <span class="job-card-id">${esc(jobId)}</span>
       </div>
 
       ${badges.length ? '<div class="job-card-badges">' + badges.join("") + '</div>' : ""}
 
-      <p class="job-card-description">${esc(j.description || "")}</p>
+      <p class="job-card-description">${esc(descTxt)}</p>
 
       ${skills.length ? `
       <div class="job-card-skills">
@@ -809,7 +933,7 @@ const IndexPage = {
 
       <div class="job-card-foot">
         <div class="job-card-meta">
-          <span class="job-card-meta-item">💰 ${esc(j.salaryDisplay || "Not disclosed")}</span>
+          <span class="job-card-meta-item">💰 ${esc(salaryTxt)}</span>
           <span class="job-card-meta-item">🧭 ${esc(expTxt)}</span>
           ${postedTxt ? '<span class="job-card-meta-item">🗓 ' + esc(postedTxt) + '</span>' : ""}
         </div>
@@ -1025,22 +1149,22 @@ const JobDetail = {
     } else this.el.jobPositionsChip.hidden = true;
     if (job.isRemote) this.el.jobRemoteChip.hidden = false; else this.el.jobRemoteChip.hidden = true;
 
-    this.el.jobTitle.textContent = job.title;
-    this.el.jobCompany.textContent = job.company || "Raveone Client";
-    this.el.jobLocationTop.textContent = job.location || "India";
+    this.el.jobTitle.textContent = cleanText(job.title) || "Untitled Role";
+    this.el.jobCompany.textContent = cleanText(job.company) || "Raveone Client";
+    this.el.jobLocationTop.textContent = cleanText(job.location) || "India";
     if (job.industry) {
-      this.el.jobIndustryTop.textContent = job.industry;
+      this.el.jobIndustryTop.textContent = cleanText(job.industry);
       this.el.jobIndustryDot.hidden = false;
     } else {
       this.el.jobIndustryDot.hidden = true;
     }
 
-    this.el.jobSalary.textContent = job.salaryDisplay || job.salary || "Not disclosed";
-    this.el.jobExp.textContent = (job.minExp || job.maxExp) ? (job.minExp + "–" + job.maxExp + " yrs") : "Any";
-    this.el.jobLocationMeta.textContent = job.location || "India";
+    this.el.jobSalary.textContent = cleanSalary(job.salaryDisplay || job.salary) || "Not disclosed";
+    this.el.jobExp.textContent = formatExpDisplay(job.minExp, job.maxExp);
+    this.el.jobLocationMeta.textContent = cleanText(job.location) || "India";
     this.el.jobPostedDate.textContent = job.postedDate || "—";
 
-    if (this.el.crumbCurrent) this.el.crumbCurrent.textContent = job.title;
+    if (this.el.crumbCurrent) this.el.crumbCurrent.textContent = cleanText(job.title) || "Job";
 
     this.renderBlock("blockDescription", "jobDescription", job.description);
     this.renderBlock("blockRequirements", "jobRequirements", job.requirements);
@@ -1048,19 +1172,29 @@ const JobDetail = {
     this.renderBlock("blockIndustry", "jobIndustry", job.industry);
 
     if (job.skills && job.skills.length) {
-      this.el.blockSkills.hidden = false;
-      this.el.jobSkills.innerHTML = job.skills.map(function (s) {
-        return '<span class="skill-chip">' + esc(s) + '</span>';
-      }).join("");
+      const cleanSkills = job.skills.map(cleanSkill).filter(Boolean);
+      if (cleanSkills.length) {
+        this.el.blockSkills.hidden = false;
+        this.el.jobSkills.innerHTML = cleanSkills.map(function (s) {
+          return '<span class="skill-chip">' + esc(s) + '</span>';
+        }).join("");
+      } else {
+        this.el.blockSkills.hidden = true;
+      }
     } else {
       this.el.blockSkills.hidden = true;
     }
 
     if (job.benefits && job.benefits.length) {
-      this.el.blockBenefits.hidden = false;
-      this.el.jobBenefits.innerHTML = job.benefits.map(function (b) {
-        return '<span class="benefit-item">✓ ' + esc(b) + '</span>';
-      }).join("");
+      const cleanBenefits = job.benefits.map(cleanSkill).filter(Boolean);
+      if (cleanBenefits.length) {
+        this.el.blockBenefits.hidden = false;
+        this.el.jobBenefits.innerHTML = cleanBenefits.map(function (b) {
+          return '<span class="benefit-item">✓ ' + esc(b) + '</span>';
+        }).join("");
+      } else {
+        this.el.blockBenefits.hidden = true;
+      }
     } else {
       this.el.blockBenefits.hidden = true;
     }
@@ -1077,12 +1211,12 @@ const JobDetail = {
     if (this.el.fJobId) this.el.fJobId.value = job.jobId;
 
     const applySub = document.getElementById("applyCardSub");
-    if (applySub) applySub.textContent = job.company + " • " + job.location;
+    if (applySub) applySub.textContent = cleanText(job.company) + " • " + cleanText(job.location);
 
     if (this.el.mobileApplyBar) {
       this.el.mobileApplyBar.hidden = false;
-      this.el.mobileJobTitle.textContent = job.title;
-      this.el.mobileJobSalary.textContent = job.salaryDisplay || job.salary || "";
+      this.el.mobileJobTitle.textContent = cleanText(job.title);
+      this.el.mobileJobSalary.textContent = cleanSalary(job.salaryDisplay || job.salary) || "";
     }
 
     SaveShare.initSaveButton(job.jobId);
@@ -1106,16 +1240,17 @@ const JobDetail = {
   },
 
   renderCompany: function (job) {
-    if (!job.company) {
+    const companyName = cleanText(job.company);
+    if (!companyName) {
       this.el.blockCompany.hidden = true;
       return;
     }
     this.el.blockCompany.hidden = false;
-    this.el.companyName.textContent = job.company;
+    this.el.companyName.textContent = companyName;
 
     const addr = document.getElementById("companyAddress");
     if (job.address) {
-      addr.textContent = "📍 " + job.address;
+      addr.textContent = "📍 " + cleanText(job.address);
       addr.style.display = "";
     } else {
       addr.style.display = "none";
@@ -1169,14 +1304,14 @@ const JobDetail = {
     const schema = {
       "@context": "https://schema.org/",
       "@type": "JobPosting",
-      "title": job.title,
+      "title": cleanText(job.title),
       "description": this.buildDescriptionHtml(job),
       "datePosted": postedDate,
       "validThrough": validThrough,
       "employmentType": empType,
       "hiringOrganization": {
         "@type": "Organization",
-        "name": job.company || "Raveone Consultants",
+        "name": cleanText(job.company) || "Raveone Consultants",
         "sameAs": (job.website && String(job.website).indexOf("http") === 0)
           ? job.website : ("https://" + (job.website || SITE.portal)),
         "logo": "https://www.raveone.in/logo.png"
@@ -1216,7 +1351,7 @@ const JobDetail = {
       };
     }
 
-    if (job.industry) schema.industry = job.industry;
+    if (job.industry) schema.industry = cleanText(job.industry);
 
     if (job.isRemote) {
       schema.jobLocationType = "TELECOMMUTE";
@@ -1234,7 +1369,7 @@ const JobDetail = {
     if (job.education) {
       schema.educationRequirements = {
         "@type": "EducationalOccupationalCredential",
-        "credentialCategory": job.education
+        "credentialCategory": cleanText(job.education)
       };
     }
 
@@ -1249,7 +1384,7 @@ const JobDetail = {
 
   buildDescriptionHtml: function (job) {
     const parts = [];
-    parts.push("<p><strong>" + esc(job.title) + "</strong> — " + esc(job.location || "India") + "</p>");
+    parts.push("<p><strong>" + esc(cleanText(job.title)) + "</strong> — " + esc(cleanText(job.location) || "India") + "</p>");
     if (job.description) {
       parts.push("<p>" + esc(job.description).replace(/\n/g, "</p><p>") + "</p>");
     }
@@ -1294,9 +1429,9 @@ const JobDetail = {
         self.el.similarJobs.innerHTML = similar.map(function (j) {
           return `
             <a class="similar-card" href="job.html?job=${encodeURIComponent(j.jobId)}">
-              <div class="similar-title">${esc(j.title)}</div>
-              <div class="similar-company">${esc(j.company)} • ${esc(j.location)}</div>
-              <div class="similar-salary">${esc(j.salaryDisplay || "Not disclosed")}</div>
+              <div class="similar-title">${esc(cleanText(j.title))}</div>
+              <div class="similar-company">${esc(cleanText(j.company))} • ${esc(cleanText(j.location))}</div>
+              <div class="similar-salary">${esc(cleanSalary(j.salaryDisplay) || "Not disclosed")}</div>
             </a>
           `;
         }).join("");
