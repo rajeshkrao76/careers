@@ -16,7 +16,7 @@
 /* ==========================================================================
    CONFIG — EDIT THIS BEFORE DEPLOY
    ========================================================================== */
-const API_URL = "https://script.google.com/macros/s/AKfycbzSX8aT_Vecff3ZJinj0wt-DU72NH9jmerdyN7DywmGlX401jssm87ZHS6QUnP8qG0y/exec";
+const API_URL = "const API_URL = "https://script.google.com/macros/s/AKfycbzSX8aT_Vecff3ZJinj0wt-DU72NH9jmerdyN7DywmGlX401jssm87ZHS6QUnP8qG0y/exec";";
 
 /* ==========================================================================
    CONSTANTS
