@@ -250,16 +250,20 @@ const API = {
       });
   },
 
-  getJob: function (jobId) {
-    return fetch(API_URL + "?action=job&id=" + encodeURIComponent(jobId))
-      .then(function (r) { return r.json(); })
-      .then(function (job) { return API.normalizeJob(job); })
-      .catch(function (err) {
-        console.error("API.getJob failed:", err);
-        throw err;
-      });
-  },
-
+ getJob: function (jobId) {
+  return API.getJobs().then(function (jobs) {
+    if (!Array.isArray(jobs)) return { error: "not_found" };
+    const target = String(jobId || "").toLowerCase().trim();
+    const found = jobs.find(function (j) {
+      return String(j.jobId || "").toLowerCase().trim() === target;
+    });
+    return found || { error: "not_found" };
+  }).catch(function (err) {
+    console.error("API.getJob failed:", err);
+    throw err;
+  });
+},
+   
   submitApplication: function (payload) {
     return fetch(API_URL, {
       method: "POST",
