@@ -10,13 +10,13 @@
  *     2. Copy the Web App URL (looks like: https://script.google.com/.../exec)
  *     3. Paste it into API_URL below
  *     4. Commit this file
- * ========================================================================== */
+ * ==========================================================================
+ */
 
 /* ==========================================================================
    CONFIG — EDIT THIS BEFORE DEPLOY
    ========================================================================== */
-const API_URL = "const API_URL = "https://script.google.com/macros/s/AKfycbzSX8aT_Vecff3ZJinj0wt-DU72NH9jmerdyN7DywmGlX401jssm87ZHS6QUnP8qG0y/exec";";
-// Replace YOUR_DEPLOYMENT_ID with your actual Apps Script Web App deployment ID.
+const API_URL = "https://script.google.com/macros/s/AKfycbzSX8aT_Vecff3ZJinj0wt-DU72NH9jmerdyN7DywmGlX401jssm87ZHS6QUnP8qG0y/exec";
 
 /* ==========================================================================
    CONSTANTS
@@ -57,9 +57,6 @@ const STATE = {
    UTILITIES
    ========================================================================== */
 
-/**
- * Escape HTML — safe insertion into DOM.
- */
 function esc(s) {
   if (s === null || s === undefined) return "";
   return String(s)
@@ -70,9 +67,6 @@ function esc(s) {
     .replace(/'/g, "&#039;");
 }
 
-/**
- * Parse any date — returns "x days ago" or "today".
- */
 function daysAgo(dateVal) {
   if (!dateVal) return "";
   const d = dateVal instanceof Date ? dateVal : new Date(dateVal);
@@ -86,27 +80,17 @@ function daysAgo(dateVal) {
   return Math.floor(diff / 30) + " months ago";
 }
 
-
-/**
- * Extract min years from experience string.
- */
 function parseYears(v) {
   const n = parseFloat(String(v || "").replace(/[^\d.]/g, ""));
   return isNaN(n) ? 0 : n;
 }
 
-/**
- * Compute salary range for filtering/sorting.
- */
 function salaryMaxInLpa(job) {
   const max = parseFloat(String(job.maxSalary || job.minSalary || "").replace(/[^\d.]/g, ""));
   if (isNaN(max)) return 0;
   return max;
 }
 
-/**
- * Debounce function.
- */
 function debounce(fn, ms) {
   let t;
   return function () {
@@ -116,9 +100,6 @@ function debounce(fn, ms) {
   };
 }
 
-/**
- * localStorage — safe wrappers.
- */
 const Store = {
   get: function (key, fallback) {
     try {
@@ -135,31 +116,14 @@ const Store = {
    API LAYER
    ========================================================================== */
 const API = {
-  /**
-   * Normalize a job object from the API.
-   * Apps Script returns some fields as strings (skills, benefits, "Yes"/"No")
-   * but the frontend expects arrays and booleans.
-   */
   normalizeJob: function (j) {
     if (!j) return j;
-
-    // skills → array
     if (!Array.isArray(j.skills)) {
-      j.skills = String(j.skills || "")
-        .split(",")
-        .map(function (s) { return s.trim(); })
-        .filter(Boolean);
+      j.skills = String(j.skills || "").split(",").map(function (s) { return s.trim(); }).filter(Boolean);
     }
-
-    // benefits → array
     if (!Array.isArray(j.benefits)) {
-      j.benefits = String(j.benefits || "")
-        .split(",")
-        .map(function (s) { return s.trim(); })
-        .filter(Boolean);
+      j.benefits = String(j.benefits || "").split(",").map(function (s) { return s.trim(); }).filter(Boolean);
     }
-
-    // boolean flags
     const isYes = function (v) {
       if (v === true) return true;
       const s = String(v || "").toLowerCase().trim();
@@ -168,13 +132,9 @@ const API = {
     j.isUrgent = isYes(j.isUrgent);
     j.isFeatured = isYes(j.isFeatured);
     j.isRemote = isYes(j.isRemote);
-
     return j;
   },
 
-  /**
-   * Fetch all active jobs.
-   */
   getJobs: function () {
     return fetch(API_URL + "?action=jobs")
       .then(function (r) { return r.json(); })
@@ -188,9 +148,6 @@ const API = {
       });
   },
 
-  /**
-   * Fetch single job by ID.
-   */
   getJob: function (jobId) {
     return fetch(API_URL + "?action=job&id=" + encodeURIComponent(jobId))
       .then(function (r) { return r.json(); })
@@ -201,14 +158,11 @@ const API = {
       });
   },
 
-  /**
-   * Submit candidate application.
-   */
   submitApplication: function (payload) {
     return fetch(API_URL, {
       method: "POST",
       body: JSON.stringify(payload),
-      headers: { "Content-Type": "text/plain;charset=utf-8" } // Apps Script requires this
+      headers: { "Content-Type": "text/plain;charset=utf-8" }
     })
       .then(function (r) { return r.json(); })
       .catch(function (err) {
@@ -219,12 +173,9 @@ const API = {
 };
 
 /* ==========================================================================
-   SHARED UI — header, mobile menu, save-jobs badge
+   SHARED UI
    ========================================================================== */
 const UI = {
-  /**
-   * Detect page type from DOM.
-   */
   page: function () {
     if (document.getElementById("jobsGrid")) return "index";
     if (document.getElementById("jobDetail")) return "job";
@@ -232,9 +183,6 @@ const UI = {
     return "unknown";
   },
 
-  /**
-   * Setup mobile menu toggle.
-   */
   initMobileMenu: function () {
     const toggle = document.getElementById("mobileToggle");
     const nav = document.getElementById("mainNav");
@@ -245,7 +193,6 @@ const UI = {
       toggle.setAttribute("aria-expanded", open ? "true" : "false");
     });
 
-    // Close menu on outside click
     document.addEventListener("click", function (e) {
       if (!nav.classList.contains("open")) return;
       if (nav.contains(e.target) || toggle.contains(e.target)) return;
@@ -253,7 +200,6 @@ const UI = {
       toggle.setAttribute("aria-expanded", "false");
     });
 
-    // Close on nav link click
     nav.querySelectorAll(".nav-link").forEach(function (a) {
       a.addEventListener("click", function () {
         nav.classList.remove("open");
@@ -262,9 +208,6 @@ const UI = {
     });
   },
 
-  /**
-   * Shrink header on scroll.
-   */
   initScrollEffect: function () {
     const header = document.getElementById("siteHeader");
     if (!header) return;
@@ -279,17 +222,11 @@ const UI = {
     }, { passive: true });
   },
 
-  /**
-   * Set footer year.
-   */
   setYear: function () {
     const y = document.getElementById("footerYear");
     if (y) y.textContent = new Date().getFullYear();
   },
 
-  /**
-   * Init a smooth appear for elements as they scroll in.
-   */
   initReveal: function () {
     if (!("IntersectionObserver" in window)) return;
     const els = document.querySelectorAll(".trust-card, .benefit-card, .blog-card, .process-step");
@@ -317,35 +254,23 @@ const UI = {
    SAVE / SHARE / COPY-LINK
    ========================================================================== */
 const SaveShare = {
-  /**
-   * Get saved jobs array.
-   */
   getSaved: function () {
     return Store.get(STORAGE_KEYS.savedJobs, []);
   },
 
-  /**
-   * Check if a job is saved.
-   */
   isSaved: function (jobId) {
     return this.getSaved().indexOf(jobId) !== -1;
   },
 
-  /**
-   * Toggle save state for a job.
-   */
   toggle: function (jobId) {
     const arr = this.getSaved();
     const idx = arr.indexOf(jobId);
     if (idx === -1) arr.push(jobId);
     else arr.splice(idx, 1);
     Store.set(STORAGE_KEYS.savedJobs, arr);
-    return idx === -1; // true if just saved
+    return idx === -1;
   },
 
-  /**
-   * Init save button on job detail page.
-   */
   initSaveButton: function (jobId) {
     const btn = document.getElementById("saveBtn");
     const label = document.getElementById("saveBtnText");
@@ -365,7 +290,6 @@ const SaveShare = {
       const nowSaved = SaveShare.toggle(jobId);
       update();
       if (nowSaved) {
-        // Small toast-like feedback
         const orig = label ? label.textContent : "";
         if (label) label.textContent = "Saved ✓";
         setTimeout(update, 1200);
@@ -375,9 +299,6 @@ const SaveShare = {
     update();
   },
 
-  /**
-   * Init share button (opens popover).
-   */
   initShareButton: function (job) {
     const shareBtn = document.getElementById("shareBtn");
     const copyBtn = document.getElementById("copyLinkBtn");
@@ -405,7 +326,6 @@ const SaveShare = {
       closePopover();
     });
 
-    // Populate share links
     const pageUrl = window.location.href;
     const text = "Check out this job: " + job.title + " at " + (job.company || "Raveone") + " — " + job.location;
 
@@ -469,9 +389,6 @@ const SaveShare = {
    INDEX PAGE CONTROLLER
    ========================================================================== */
 const IndexPage = {
-  /**
-   * Entry point.
-   */
   init: function () {
     this.cacheEls();
     this.bindEvents();
@@ -515,7 +432,6 @@ const IndexPage = {
   bindEvents: function () {
     const self = this;
 
-    // Hero search — sync with filter input
     if (this.el.searchForm) {
       this.el.searchForm.addEventListener("submit", function (e) {
         e.preventDefault();
@@ -525,7 +441,6 @@ const IndexPage = {
       });
     }
 
-    // Filter search — debounced
     const debouncedFilter = debounce(function () {
       self.state.updateFilters();
     }, 250);
@@ -533,13 +448,11 @@ const IndexPage = {
     if (this.el.filterSearch) this.el.filterSearch.addEventListener("input", debouncedFilter);
     if (this.el.search) this.el.search.addEventListener("input", debouncedFilter);
 
-    // Filter dropdowns
     ["filterLocation", "filterCategory", "filterExp", "filterCompany", "filterType"].forEach(function (k) {
       const el = self.el[k];
       if (el) el.addEventListener("change", function () { self.state.updateFilters(); });
     });
 
-    // Sort
     if (this.el.sortSelect) {
       this.el.sortSelect.addEventListener("change", function () {
         STATE.sort = self.el.sortSelect.value;
@@ -547,17 +460,14 @@ const IndexPage = {
       });
     }
 
-    // Clear buttons
     [this.el.clearFilters, this.el.emptyClear].forEach(function (b) {
       if (b) b.addEventListener("click", function () { self.state.clearAll(); });
     });
 
-    // Load more
     if (this.el.loadMoreBtn) {
       this.el.loadMoreBtn.addEventListener("click", function () { self.renderNext(); });
     }
 
-    // Popular tags
     if (this.el.popularTags) {
       this.el.popularTags.querySelectorAll(".popular-tag").forEach(function (tag) {
         tag.addEventListener("click", function () {
@@ -570,7 +480,6 @@ const IndexPage = {
       });
     }
 
-    // Mobile filter sheet
     if (this.el.mobileFilterBtn) {
       this.el.mobileFilterBtn.addEventListener("click", function () {
         self.el.filtersCard.classList.add("open");
@@ -594,7 +503,6 @@ const IndexPage = {
       STATE.filters.company = IndexPage.el.filterCompany.value;
       STATE.filters.type = IndexPage.el.filterType.value;
 
-      // Sync hero search <-> filter search
       if (IndexPage.el.search && IndexPage.el.search.value !== IndexPage.el.filterSearch.value) {
         IndexPage.el.search.value = IndexPage.el.filterSearch.value;
       }
@@ -614,9 +522,6 @@ const IndexPage = {
     }
   },
 
-  /**
-   * Fetch jobs from API.
-   */
   loadJobs: function () {
     const self = this;
     API.getJobs()
@@ -637,24 +542,20 @@ const IndexPage = {
     if (this.el.skeleton) this.el.skeleton.hidden = true;
   },
 
-   populateFilters: function () {
+  populateFilters: function () {
     const locSet = {};
     const catSet = {};
     const compSet = {};
 
     STATE.jobs.forEach(function (j) {
-      // Locations
       if (j.location) {
         String(j.location).split(/[,/]/).map(function (s) { return s.trim(); })
           .filter(Boolean).forEach(function (l) { locSet[l] = (locSet[l] || 0) + 1; });
       }
-      // Categories
       if (j.category) catSet[j.category] = (catSet[j.category] || 0) + 1;
-      // Companies
       if (j.company) compSet[j.company] = (compSet[j.company] || 0) + 1;
     });
 
-    // Location options
     Object.keys(locSet).sort().forEach(function (l) {
       const opt = document.createElement("option");
       opt.value = l;
@@ -662,7 +563,6 @@ const IndexPage = {
       this.el.filterLocation.appendChild(opt);
     }, this);
 
-    // Category options
     Object.keys(catSet).sort().forEach(function (c) {
       const opt = document.createElement("option");
       opt.value = c;
@@ -670,7 +570,6 @@ const IndexPage = {
       this.el.filterCategory.appendChild(opt);
     }, this);
 
-    // Company options
     Object.keys(compSet).sort().forEach(function (c) {
       const opt = document.createElement("option");
       opt.value = c;
@@ -678,19 +577,13 @@ const IndexPage = {
       this.el.filterCompany.appendChild(opt);
     }, this);
 
-    // NEW: Auto-generate popular tags from live data
     this.renderPopularTags();
   },
 
-  /**
-   * Auto-detect the top 7 keywords from live jobs and render as Popular tags.
-   * Only shows tags that have at least 1 matching job — no dead buttons.
-   */
   renderPopularTags: function () {
     const container = this.el.popularTags;
     if (!container) return;
 
-    // 1. Score every word across all jobs
     const wordCount = {};
     const stopWords = {
       "and":"1","or":"1","the":"1","a":"1","an":"1","of":"1","for":"1","to":"1",
@@ -711,12 +604,11 @@ const IndexPage = {
           w = w.trim();
           if (!w || w.length < 2) return;
           if (stopWords[w]) return;
-          if (/^\d+$/.test(w)) return; // skip pure numbers
+          if (/^\d+$/.test(w)) return;
           wordCount[w] = (wordCount[w] || 0) + (weight || 1);
         });
     };
 
-    // 2. Score from categories (weight 5), skills (weight 3), titles (weight 2)
     STATE.jobs.forEach(function (j) {
       addWords(j.category, 5);
       if (j.skills && j.skills.length) {
@@ -725,12 +617,10 @@ const IndexPage = {
       addWords(j.title, 2);
     });
 
-    // 3. Pick top 7 words that actually match at least 1 live job
     const self = this;
     const candidates = Object.keys(wordCount)
       .sort(function (a, b) { return wordCount[b] - wordCount[a]; })
       .filter(function (word) {
-        // Double-check the word returns results
         return STATE.jobs.some(function (j) {
           const hay = [
             j.title, j.category, j.industry, j.description,
@@ -746,7 +636,6 @@ const IndexPage = {
       return;
     }
 
-    // 4. Render the tags
     const label = container.querySelector(".popular-label");
     container.innerHTML = "";
     if (label) container.appendChild(label);
@@ -770,6 +659,7 @@ const IndexPage = {
   capitalize: function (s) {
     return String(s || "").replace(/\b\w/g, function (c) { return c.toUpperCase(); });
   },
+
   updateStats: function () {
     const clients = {};
     const cities = {};
@@ -791,7 +681,6 @@ const IndexPage = {
     const f = STATE.filters;
 
     let list = STATE.jobs.filter(function (j) {
-      // Text search
       if (f.search) {
         const hay = [
           j.jobId, j.title, j.company, j.location, j.category,
@@ -801,19 +690,11 @@ const IndexPage = {
         if (hay.indexOf(f.search) === -1) return false;
       }
 
-      // Location
       if (f.location && String(j.location || "").toLowerCase().indexOf(f.location.toLowerCase()) === -1) return false;
-
-      // Category
       if (f.category && j.category !== f.category) return false;
-
-      // Company
       if (f.company && j.company !== f.company) return false;
-
-      // Job type
       if (f.type && String(j.jobType || j.employmentType || "").toLowerCase() !== f.type.toLowerCase()) return false;
 
-      // Experience
       if (f.exp) {
         const minExp = parseYears(j.minExp);
         if (f.exp === "0-2" && minExp > 2) return false;
@@ -832,7 +713,6 @@ const IndexPage = {
   applySortAndRender: function () {
     const sort = STATE.sort;
 
-    // Sort
     STATE.filtered.sort(function (a, b) {
       if (sort === "recent") {
         const da = new Date(a.postedDate || 0).getTime();
@@ -845,7 +725,6 @@ const IndexPage = {
       if (sort === "exp-low") {
         return parseYears(a.minExp) - parseYears(b.minExp);
       }
-      // relevance: featured first, then urgent
       const aF = a.isFeatured ? 1 : 0;
       const bF = b.isFeatured ? 1 : 0;
       if (aF !== bF) return bF - aF;
@@ -854,7 +733,6 @@ const IndexPage = {
       return bU - aU;
     });
 
-    // Update counts
     if (this.el.count) {
       this.el.count.textContent = STATE.filtered.length + " role" + (STATE.filtered.length === 1 ? "" : "s");
     }
@@ -862,7 +740,6 @@ const IndexPage = {
       this.el.info.textContent = STATE.filtered.length + " of " + STATE.jobs.length + " matching";
     }
 
-    // Reset display
     STATE.displayed = 0;
     this.el.grid.innerHTML = "";
 
@@ -882,7 +759,6 @@ const IndexPage = {
 
     STATE.displayed = end;
 
-    // Empty state
     if (STATE.filtered.length === 0) {
       this.el.empty.hidden = false;
       this.el.loadMoreWrap.hidden = true;
@@ -979,7 +855,6 @@ const JobDetail = {
       content: document.getElementById("jobContent"),
       schemaContainer: document.getElementById("jobSchemaContainer"),
 
-      // Hero
       jobIdChip: document.getElementById("jobIdChip"),
       jobTypeChip: document.getElementById("jobTypeChip"),
       jobUrgentChip: document.getElementById("jobUrgentChip"),
@@ -996,7 +871,6 @@ const JobDetail = {
       jobPostedDate: document.getElementById("jobPostedDate"),
       crumbCurrent: document.getElementById("crumbCurrent"),
 
-      // Content blocks
       blockDescription: document.getElementById("blockDescription"),
       jobDescription: document.getElementById("jobDescription"),
       blockRequirements: document.getElementById("blockRequirements"),
@@ -1019,7 +893,6 @@ const JobDetail = {
       blockSimilar: document.getElementById("blockSimilar"),
       similarJobs: document.getElementById("similarJobs"),
 
-      // Apply
       applyForm: document.getElementById("applyForm"),
       applySuccess: document.getElementById("applySuccess"),
       successAppId: document.getElementById("successAppId"),
@@ -1029,7 +902,6 @@ const JobDetail = {
       uploadZone: document.getElementById("uploadZone"),
       uploadFileName: document.getElementById("uploadFileName"),
 
-      // Mobile apply bar
       mobileApplyBar: document.getElementById("mobileApplyBar"),
       mobileJobTitle: document.getElementById("mobileJobTitle"),
       mobileJobSalary: document.getElementById("mobileJobSalary"),
@@ -1040,7 +912,6 @@ const JobDetail = {
   bindEvents: function () {
     const self = this;
 
-    // Upload zone — drag & drop
     if (this.el.uploadZone) {
       const zone = this.el.uploadZone;
       const input = this.el.fResume;
@@ -1070,7 +941,6 @@ const JobDetail = {
       input.addEventListener("change", function () { self.updateUploadFileName(); });
     }
 
-    // Mobile apply bar — scroll to form
     if (this.el.mobileApplyBtn) {
       this.el.mobileApplyBtn.addEventListener("click", function () {
         const form = document.getElementById("applyForm");
@@ -1084,7 +954,6 @@ const JobDetail = {
       });
     }
 
-    // Apply form submit
     if (this.el.applyForm) {
       this.el.applyForm.addEventListener("submit", function (e) {
         e.preventDefault();
@@ -1092,12 +961,10 @@ const JobDetail = {
       });
     }
 
-    // Similar job cards — delegate click
     if (this.el.similarJobs) {
       this.el.similarJobs.addEventListener("click", function (e) {
         const card = e.target.closest("a");
         if (!card) return;
-        // Let browser navigate naturally
       });
     }
   },
@@ -1141,16 +1008,13 @@ const JobDetail = {
   render: function (job) {
     STATE.currentJob = job;
 
-    // Update title & meta
     document.title = job.title + " at " + (job.company || "Raveone") + " — Raveone Careers";
     const metaDesc = (job.description || "").substring(0, 150).replace(/<[^>]*>/g, "") + "…";
     this.updateMetaTags(job, metaDesc);
 
-    // Hide loading, show content
     this.el.loading.hidden = true;
     this.el.content.hidden = false;
 
-    // Hero chips
     this.el.jobIdChip.textContent = job.jobId;
     this.el.jobTypeChip.textContent = job.jobType || job.employmentType || "Full-Time";
 
@@ -1161,7 +1025,6 @@ const JobDetail = {
     } else this.el.jobPositionsChip.hidden = true;
     if (job.isRemote) this.el.jobRemoteChip.hidden = false; else this.el.jobRemoteChip.hidden = true;
 
-    // Hero text
     this.el.jobTitle.textContent = job.title;
     this.el.jobCompany.textContent = job.company || "Raveone Client";
     this.el.jobLocationTop.textContent = job.location || "India";
@@ -1172,22 +1035,18 @@ const JobDetail = {
       this.el.jobIndustryDot.hidden = true;
     }
 
-    // Quick meta
     this.el.jobSalary.textContent = job.salaryDisplay || job.salary || "Not disclosed";
     this.el.jobExp.textContent = (job.minExp || job.maxExp) ? (job.minExp + "–" + job.maxExp + " yrs") : "Any";
     this.el.jobLocationMeta.textContent = job.location || "India";
     this.el.jobPostedDate.textContent = job.postedDate || "—";
 
-    // Breadcrumb
     if (this.el.crumbCurrent) this.el.crumbCurrent.textContent = job.title;
 
-    // Content blocks
     this.renderBlock("blockDescription", "jobDescription", job.description);
     this.renderBlock("blockRequirements", "jobRequirements", job.requirements);
     this.renderBlock("blockEducation", "jobEducation", job.education);
     this.renderBlock("blockIndustry", "jobIndustry", job.industry);
 
-    // Skills
     if (job.skills && job.skills.length) {
       this.el.blockSkills.hidden = false;
       this.el.jobSkills.innerHTML = job.skills.map(function (s) {
@@ -1197,7 +1056,6 @@ const JobDetail = {
       this.el.blockSkills.hidden = true;
     }
 
-    // Benefits
     if (job.benefits && job.benefits.length) {
       this.el.blockBenefits.hidden = false;
       this.el.jobBenefits.innerHTML = job.benefits.map(function (b) {
@@ -1207,10 +1065,8 @@ const JobDetail = {
       this.el.blockBenefits.hidden = true;
     }
 
-    // Company card
     this.renderCompany(job);
 
-    // Deadline
     if (job.applicationDeadline) {
       this.el.blockDeadline.hidden = false;
       this.el.jobDeadline.textContent = job.applicationDeadline;
@@ -1218,28 +1074,21 @@ const JobDetail = {
       this.el.blockDeadline.hidden = true;
     }
 
-    // Apply form — hidden jobId
     if (this.el.fJobId) this.el.fJobId.value = job.jobId;
 
-    // Apply card subtitle
     const applySub = document.getElementById("applyCardSub");
     if (applySub) applySub.textContent = job.company + " • " + job.location;
 
-    // Mobile apply bar
     if (this.el.mobileApplyBar) {
       this.el.mobileApplyBar.hidden = false;
       this.el.mobileJobTitle.textContent = job.title;
       this.el.mobileJobSalary.textContent = job.salaryDisplay || job.salary || "";
     }
 
-    // Save/Share
     SaveShare.initSaveButton(job.jobId);
     SaveShare.initShareButton(job);
 
-    // Schema injection
     this.injectSchema(job);
-
-    // Similar jobs
     this.loadSimilar(job);
   },
 
@@ -1301,10 +1150,6 @@ const JobDetail = {
     set("twDescription", "content", metaDesc);
   },
 
-  /**
-   * Inject Google Jobs JSON-LD schema.
-   * Fully compliant with Google Jobs structured data requirements.
-   */
   injectSchema: function (job) {
     const scriptUrl = window.location.origin + window.location.pathname;
     const today = new Date();
@@ -1356,7 +1201,6 @@ const JobDetail = {
       "url": scriptUrl + "?job=" + encodeURIComponent(job.jobId)
     };
 
-    // Base salary
     const minS = parseFloat(String(job.minSalary || "").replace(/[^\d.]/g, ""));
     const maxS = parseFloat(String(job.maxSalary || "").replace(/[^\d.]/g, ""));
     if (minS || maxS) {
@@ -1372,16 +1216,13 @@ const JobDetail = {
       };
     }
 
-    // Industry
     if (job.industry) schema.industry = job.industry;
 
-    // Remote
     if (job.isRemote) {
       schema.jobLocationType = "TELECOMMUTE";
       schema.applicantLocationRequirements = { "@type": "Country", "name": "India" };
     }
 
-    // Experience
     const monthsExp = parseInt(job.minExpMonths, 10) || (parseYears(job.minExp) * 12);
     if (monthsExp > 0) {
       schema.experienceRequirements = {
@@ -1390,7 +1231,6 @@ const JobDetail = {
       };
     }
 
-    // Education
     if (job.education) {
       schema.educationRequirements = {
         "@type": "EducationalOccupationalCredential",
@@ -1398,7 +1238,6 @@ const JobDetail = {
       };
     }
 
-    // Inject
     const container = this.el.schemaContainer;
     if (container) {
       const script = document.createElement("script");
@@ -1434,7 +1273,6 @@ const JobDetail = {
 
   loadSimilar: function (job) {
     const self = this;
-    // Fetch all jobs and filter similar
     API.getJobs()
       .then(function (jobs) {
         if (!Array.isArray(jobs)) return;
@@ -1471,7 +1309,6 @@ const JobDetail = {
   submitApplication: function () {
     const self = this;
 
-    // Gather values
     const name = document.getElementById("fName").value.trim();
     const phone = document.getElementById("fPhone").value.trim().replace(/[^\d]/g, "");
     const email = document.getElementById("fEmail").value.trim();
@@ -1486,7 +1323,6 @@ const JobDetail = {
     const jobId = this.el.fJobId.value;
     const fileInput = this.el.fResume;
 
-    // Validation (Poka-Yoke)
     if (!name || name.length < 2) return this.fieldError("fName", "Please enter your full name.");
     if (!phone || phone.length !== 10 || !/^[6-9]/.test(phone)) return this.fieldError("fPhone", "Enter a valid 10-digit Indian mobile number.");
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return this.fieldError("fEmail", "Enter a valid email address.");
@@ -1509,7 +1345,6 @@ const JobDetail = {
       return;
     }
 
-    // Busy state
     const btn = this.el.submitBtn;
     const origText = btn.querySelector(".btn-apply-text") ? btn.querySelector(".btn-apply-text").textContent : "Submit";
     btn.disabled = true;
@@ -1519,7 +1354,6 @@ const JobDetail = {
       btn.textContent = "Submitting…";
     }
 
-    // Read file as base64
     const reader = new FileReader();
     reader.onload = function (ev) {
       const base64 = String(ev.target.result).split(",")[1];
@@ -1543,10 +1377,10 @@ const JobDetail = {
 
       API.submitApplication(payload)
         .then(function (res) {
-          if (res && res.ok) {
-            self.showSuccess(res.applicationId);
+          if (res && (res.ok || res.status === "success")) {
+            self.showSuccess(res.applicationId || res.id);
           } else {
-            throw new Error((res && res.error) || "Submission failed");
+            throw new Error((res && (res.error || res.message)) || "Submission failed");
           }
         })
         .catch(function (err) {
@@ -1584,7 +1418,6 @@ const JobDetail = {
     this.el.applyForm.hidden = true;
     this.el.applySuccess.hidden = false;
     if (this.el.successAppId) this.el.successAppId.textContent = appId || "—";
-    // Scroll into view
     this.el.applySuccess.scrollIntoView({ behavior: "smooth", block: "center" });
   },
 
@@ -1610,18 +1443,15 @@ const JobDetail = {
    BOOTSTRAP
    ========================================================================== */
 function raveoneBoot() {
-  // Shared UI
   UI.setYear();
   UI.initMobileMenu();
   UI.initScrollEffect();
   UI.initReveal();
 
-  // Page-specific
   const page = UI.page();
   if (page === "index") {
     IndexPage.init();
   } else if (page === "job") {
-    // Guard: prevent double-init from inline script in job.html
     if (!window.__jobDetailInitialized) {
       window.__jobDetailInitialized = true;
       JobDetail.init();
@@ -1629,18 +1459,12 @@ function raveoneBoot() {
   }
 }
 
-/**
- * Expose to inline scripts on job.html
- */
 window.initJobDetail = function () {
   JobDetail.init();
 };
 
 window.RAVEONE_API_URL = API_URL;
 
-/* ==========================================================================
-   RUN
-   ========================================================================== */
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", raveoneBoot);
 } else {
