@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Portal — Raveone Careers</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { margin: 0; font-family: 'Inter', sans-serif; background: #F8FAFC; color: #1E293B; }
+    .p-container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+    .p-topbar { background: #fff; border-bottom: 1px solid #E2E8F0; padding: 14px 0; position: sticky; top: 0; z-index: 50; }
+    .p-topbar-inner { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .p-brand { display: flex; align-items: center; gap: 10px; font-weight: 800; color: #1A365D; font-size: 15px; text-decoration: none; }
+    .p-user { display: flex; align-items: center; gap: 12px; }
+    .p-user-email { font-size: 12px; color: #64748B; }
+    .p-tabs { display: flex; gap: 4px; overflow-x: auto; padding: 16px 0 0 0; border-bottom: 1px solid #E2E8F0; scrollbar-width: none; }
+    .p-tabs::-webkit-scrollbar { display: none; }
+    .p-tab { padding: 10px 18px; border: none; background: none; font-weight: 700; font-size: 13px; color: #64748B; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap; transition: all .15s; font-family: inherit; }
+    .p-tab:hover { color: #1A365D; }
+    .p-tab.active { color: #1A365D; border-bottom-color: #1A365D; }
+    .p-panel { display: none; padding: 28px 0 60px; }
+    .p-panel.active { display: block; }
+    .p-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 14px; padding: 24px; margin-bottom: 16px; }
+    .p-card h2 { margin: 0 0 4px 0; font-size: 18px; font-weight: 800; letter-spacing: -.3px; }
+    .p-card p.sub { margin: 0 0 20px 0; font-size: 13px; color: #64748B; }
+    .p-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 24px; }
+    .p-stat { background: #fff; border: 1px solid #E2E8F0; border-radius: 12px; padding: 18px; text-align: center; }
+    .p-stat-num { font-size: 28px; font-weight: 900; color: #1A365D; letter-spacing: -1px; line-height: 1; }
+    .p-stat-lbl { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; color: #64748B; margin-top: 6px; }
+    .p-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    .p-field label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; color: #475569; margin-bottom: 6px; }
+    .p-field input, .p-field textarea, .p-field select { width: 100%; padding: 10px 12px; font-size: 13.5px; border: 1.5px solid #E2E8F0; border-radius: 8px; outline: none; box-sizing: border-box; font-family: inherit; }
+    .p-field input:focus, .p-field textarea:focus { border-color: #3B82F6; box-shadow: 0 0 0 3px rgba(59,130,246,.1); }
+    .p-btn { padding: 12px 24px; font-size: 13px; font-weight: 800; border-radius: 8px; border: none; cursor: pointer; transition: all .15s; font-family: inherit; }
+    .p-btn.primary { background: #1A365D; color: #fff; }
+    .p-btn.primary:hover:not(:disabled) { background: #2A5487; transform: translateY(-1px); }
+    .p-btn.ghost { background: #F1F5F9; color: #334155; }
+    .p-btn.ghost:hover { background: #E2E8F0; }
+    .p-btn.danger { background: #FEE2E2; color: #B91C1C; }
+    .p-btn.danger:hover { background: #FECACA; }
+    .p-btn:disabled { opacity: .5; cursor: not-allowed; }
+    .p-btn-sm { padding: 7px 14px; font-size: 12px; }
+    .p-app { background: #fff; border: 1px solid #E2E8F0; border-radius: 12px; padding: 18px; margin-bottom: 10px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: flex-start; }
+    .p-app-title { font-size: 15px; font-weight: 800; color: #0F172A; margin: 0 0 4px 0; }
+    .p-app-meta { font-size: 12px; color: #64748B; font-weight: 600; }
+    .p-chip { display: inline-block; padding: 3px 10px; font-size: 10.5px; font-weight: 800; border-radius: 999px; letter-spacing: .3px; }
+    .p-chip.sourced { background: #EFF6FF; color: #1D4ED8; }
+    .p-chip.submitted { background: #FEF3C7; color: #B45309; }
+    .p-chip.interview { background: #EDE9FE; color: #6D28D9; }
+    .p-chip.offer { background: #DCFCE7; color: #15803D; }
+    .p-chip.rejected { background: #FEE2E2; color: #B91C1C; }
+    .p-chip.closed { background: #F1F5F9; color: #475569; }
+    .p-empty { text-align: center; padding: 40px 20px; color: #64748B; font-size: 13px; }
+    .p-empty-icon { font-size: 36px; margin-bottom: 8px; opacity: .5; }
+    .p-int { background: #fff; border: 1px solid #E2E8F0; border-left: 4px solid #2A5487; border-radius: 10px; padding: 18px; margin-bottom: 10px; }
+    .p-int-row { display: flex; gap: 24px; flex-wrap: wrap; margin: 10px 0; }
+    .p-int-cell { font-size: 12.5px; }
+    .p-int-cell strong { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: .4px; color: #64748B; font-weight: 800; margin-bottom: 2px; }
+    .p-doc-list { display: grid; gap: 8px; }
+    .p-doc { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px; border: 1px solid #E2E8F0; border-radius: 8px; background: #fff; }
+    .p-doc-name { font-size: 13px; font-weight: 700; }
+    .p-doc-meta { font-size: 11px; color: #64748B; }
+    .p-msg { font-size: 12.5px; font-weight: 700; padding: 10px 14px; border-radius: 8px; margin-bottom: 12px; display: none; }
+    .p-msg.success { background: #DCFCE7; color: #15803D; display: block; }
+    .p-msg.error { background: #FEE2E2; color: #B91C1C; display: block; }
+    .slot-list { display: grid; gap: 8px; margin: 12px 0; }
+    .slot-option { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border: 2px solid #E2E8F0; border-radius: 10px; cursor: pointer; transition: all .15s; background: #fff; }
+    .slot-option:hover { border-color: #2A5487; background: #EFF6FF; }
+    .slot-when { font-weight: 700; color: #1A365D; font-size: 14px; }
+    .slot-meta { font-size: 11px; color: #64748B; }
+    .slot-badge { margin-left: auto; padding: 3px 8px; font-size: 10px; font-weight: 800; border-radius: 4px; background: #FEF3C7; color: #B45309; }
+    .p-modal-bg { position: fixed; inset: 0; background: rgba(15,23,42,.6); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; }
+    .p-modal-bg.open { display: flex; }
+    .p-modal { background: #fff; border-radius: 14px; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 24px; }
+    .p-modal h3 { margin: 0 0 8px 0; font-size: 17px; font-weight: 800; }
+    .p-modal p.hint { margin: 0 0 16px 0; font-size: 12.5px; color: #64748B; }
+    @media (max-width: 640px) {
+      .p-row { grid-template-columns: 1fr; }
+      .p-user-email { display: none; }
+      .p-tab { padding: 10px 12px; font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="p-topbar">
+  <div class="p-container p-topbar-inner">
+    <a href="index.html" class="p-brand">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1A365D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/></svg>
+      Raveone Careers
+    </a>
+    <div class="p-user">
+      <span class="p-user-email" id="userEmail">—</span>
+      <button class="p-btn ghost p-btn-sm" onclick="logout()">Log out</button>
+    </div>
+  </div>
+</div>
+
+<div class="p-container">
+  <nav class="p-tabs">
+    <button class="p-tab active" data-tab="dashboard">Dashboard</button>
+    <button class="p-tab" data-tab="profile">Profile</button>
+    <button class="p-tab" data-tab="applications">Applications</button>
+    <button class="p-tab" data-tab="interviews">Interviews</button>
+    <button class="p-tab" data-tab="documents">Documents</button>
+    <button class="p-tab" data-tab="alerts">Alerts</button>
+  </nav>
+
+  <div class="p-msg" id="globalMsg"></div>
+
+  <section class="p-panel active" id="panel-dashboard">
+    <div class="p-stats" id="statsContainer"></div>
+    <div id="dashboardContent"></div>
+  </section>
+
+  <section class="p-panel" id="panel-profile">
+    <div class="p-card">
+      <h2>My Profile</h2>
+      <p class="sub">Keep your details up to date — recruiters see this on every application.</p>
+      <form id="profileForm" onsubmit="saveProfile(event)">
+        <div class="p-row">
+          <div class="p-field"><label>Full Name</label><input type="text" name="name" id="pfName"></div>
+          <div class="p-field"><label>Phone</label><input type="tel" name="phone" id="pfPhone"></div>
+        </div>
+        <div class="p-row">
+          <div class="p-field"><label>Email (read-only)</label><input type="email" id="pfEmail" readonly style="background:#F8FAFC"></div>
+          <div class="p-field"><label>Current Location</label><input type="text" id="pfLocation" name="location"></div>
+        </div>
+        <div class="p-row">
+          <div class="p-field"><label>Education</label><input type="text" id="pfEducation" name="education"></div>
+          <div class="p-field"><label>Total Experience</label><input type="text" id="pfTotalExp" name="totalExp"></div>
+        </div>
+        <div class="p-row">
+          <div class="p-field"><label>Relevant Experience</label><input type="text" id="pfRelExp" name="relExp"></div>
+          <div class="p-field"><label>Notice Period</label><input type="text" id="pfNotice" name="noticePeriod"></div>
+        </div>
+        <div class="p-row">
+          <div class="p-field"><label>Current CTC</label><input type="text" id="pfCurrentCtc" name="currentCtc"></div>
+          <div class="p-field"><label>Expected CTC</label><input type="text" id="pfExpectedCtc" name="expectedCtc"></div>
+        </div>
+        <div class="p-row">
+          <div class="p-field"><label>Current Company</label><input type="text" id="pfCurrentCompany" name="currentCompany"></div>
+          <div class="p-field"><label>Current Designation</label><input type="text" id="pfCurrentDesignation" name="currentDesignation"></div>
+        </div>
+        <div class="p-row">
+          <div class="p-field"><label>LinkedIn URL</label><input type="url" id="pfLinkedin" name="linkedin"></div>
+          <div class="p-field"><label>Languages Known</label><input type="text" id="pfLanguages" name="languages"></div>
+        </div>
+        <div class="p-field" style="margin-bottom:12px"><label>Key Skills (comma separated)</label><textarea id="pfSkills" name="skills" rows="2"></textarea></div>
+        <div class="p-field" style="margin-bottom:16px"><label>Reason for Leaving</label><textarea id="pfReason" name="reasonLeaving" rows="2"></textarea></div>
+        <button class="p-btn primary" type="submit" id="saveProfileBtn">Save Changes</button>
+      </form>
+    </div>
+
+    <div class="p-card">
+      <h2>🔐 Login Email</h2>
+      <p class="sub">Current: <strong id="currentEmailLabel">—</strong></p>
+      <button class="p-btn ghost" onclick="openEmailChangeModal()">Change Email…</button>
+    </div>
+  </section>
+
+  <section class="p-panel" id="panel-applications">
+    <div class="p-card">
+      <h2>My Applications</h2>
+      <p class="sub">Track every role you've applied to.</p>
+      <div id="applicationsList"></div>
+    </div>
+  </section>
+
+  <section class="p-panel" id="panel-interviews">
+    <div class="p-card">
+      <h2>Upcoming Interviews</h2>
+      <p class="sub">Pick a slot if options are pending, or confirm / reschedule / cancel.</p>
+      <div id="upcomingInterviews"></div>
+    </div>
+    <div class="p-card">
+      <h2>Past Interviews</h2>
+      <div id="pastInterviews"></div>
+    </div>
+  </section>
+
+  <section class="p-panel" id="panel-documents">
+    <div class="p-card">
+      <h2>Upload Document</h2>
+      <p class="sub">Resume, certificates, ID proofs, offer letters — all in one place.</p>
+      <div class="p-row">
+        <div class="p-field">
+          <label>Document Type</label>
+          <select id="docType"></select>
+        </div>
+        <div class="p-field">
+          <label>Choose File (max 10 MB)</label>
+          <input type="file" id="docFile" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+        </div>
+      </div>
+      <button class="p-btn primary" onclick="uploadDoc()" id="uploadBtn">Upload</button>
+    </div>
+    <div class="p-card">
+      <h2>My Documents</h2>
+      <div id="documentsList" class="p-doc-list"></div>
+    </div>
+  </section>
+
+  <section class="p-panel" id="panel-alerts">
+    <div class="p-card">
+      <h2>🔔 Job Alerts</h2>
+      <p class="sub">Get an email when new jobs match your keywords or preferred locations.</p>
+      <form id="alertsForm" onsubmit="saveAlerts(event)">
+        <div class="p-field" style="margin-bottom:14px">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+            <input type="checkbox" id="alertEnabled" style="width:auto">
+            <span>Enable daily job alerts</span>
+          </label>
+        </div>
+        <div class="p-field" style="margin-bottom:14px">
+          <label>Keywords (comma-separated)</label>
+          <input type="text" id="alertKeywords" placeholder="CNC, Quality Engineer, Sales">
+        </div>
+        <div class="p-field" style="margin-bottom:16px">
+          <label>Preferred Locations (leave blank for anywhere)</label>
+          <input type="text" id="alertLocations" placeholder="Bangalore, Chennai">
+        </div>
+        <button type="submit" class="p-btn primary" id="saveAlertsBtn">Save Preferences</button>
+        <p style="font-size:11.5px;color:#64748B;margin-top:14px" id="alertLastSent"></p>
+      </form>
+    </div>
+  </section>
+
+</div>
+
+<div class="p-modal-bg" id="emailChangeModal">
+  <div class="p-modal">
+    <h3>Change Login Email</h3>
+    <p class="hint">We'll send a 6-digit code to your <b>new</b> email. Verify it to complete the change.</p>
+    <div class="p-field" style="margin-bottom:12px">
+      <label>New Email</label>
+      <input type="email" id="newEmailInput" placeholder="new@example.com">
+    </div>
+    <div class="p-field" style="margin-bottom:12px;display:none" id="emailOtpField">
+      <label>6-Digit Code</label>
+      <input type="tel" id="emailOtpInput" maxlength="6" placeholder="000000" style="text-align:center;font-size:18px;letter-spacing:6px;font-weight:800;font-family:'Courier New',monospace">
+    </div>
+    <p class="p-msg" id="emailChangeMsg"></p>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px">
+      <button class="p-btn ghost" onclick="closeModal('emailChangeModal')">Cancel</button>
+      <button class="p-btn primary" id="emailChangeBtn" onclick="sendEmailChangeOTP()">Send Code</button>
+    </div>
+  </div>
+</div>
+
+<div class="p-modal-bg" id="rescheduleModal">
+  <div class="p-modal">
+    <h3>Request Reschedule</h3>
+    <p class="hint">Propose 1–3 alternative datetimes. Our recruiter will confirm one.</p>
+    <input type="hidden" id="rescheduleInterviewId">
+    <div class="p-field" style="margin-bottom:10px"><label>Option 1</label><input type="datetime-local" id="reslot1"></div>
+    <div class="p-field" style="margin-bottom:10px"><label>Option 2</label><input type="datetime-local" id="reslot2"></div>
+    <div class="p-field" style="margin-bottom:10px"><label>Option 3</label><input type="datetime-local" id="reslot3"></div>
+    <div class="p-field" style="margin-bottom:12px"><label>Note (optional)</label><textarea id="reslotNote" rows="2"></textarea></div>
+    <p class="p-msg" id="rescheduleMsg"></p>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px">
+      <button class="p-btn ghost" onclick="closeModal('rescheduleModal')">Cancel</button>
+      <button class="p-btn primary" id="rescheduleBtn" onclick="submitReschedule()">Send Request</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js" defer></script>
+<script>
+const TOKEN_KEY = "raveone_portal_token";
+let token = localStorage.getItem(TOKEN_KEY);
+let profile = {};
+let currentEmail = "";
+let slotsByInterview = {};
+
+function apiURL() { return window.RAVEONE_API_URL || window.API_URL || ""; }
+
+function showMsg(text, type) {
+  const el = document.getElementById('globalMsg');
+  el.className = 'p-msg ' + (type || 'error');
+  el.textContent = text;
+  if (type === 'success') setTimeout(() => { el.className = 'p-msg'; }, 4000);
+}
+
+function esc(s) { return String(s == null ? "" : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'); }
+
+async function post(action, body) {
+  const res = await fetch(apiURL(), {
+    method: "POST",
+    body: JSON.stringify(Object.assign({ action, token }, body || {})),
+    headers: { "Content-Type": "text/plain;charset=utf-8" }
+  });
+  const data = await res.json();
+  if (!data.ok) {
+    if (/session|authenticated/i.test(data.error || "")) {
+      localStorage.removeItem(TOKEN_KEY);
+      window.location.href = "portal-login.html";
+    }
+    throw new Error(data.error || "Request failed.");
+  }
+  return data;
+}
+
+function fmtLocal(iso) {
+  if (!iso) return "";
+  try {
+    return new Date(iso).toLocaleString('en-IN', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
+  } catch (e) { return iso; }
+}
+
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+document.addEventListener('DOMContentLoaded', async function () {
+  if (!token) { window.location.href = "portal-login.html"; return; }
+  try {
+    const res = await post("portalValidateSession", {});
+    currentEmail = res.email;
+    document.getElementById('userEmail').textContent = res.email;
+    await loadDashboard();
+  } catch (e) { window.location.href = "portal-login.html"; }
+});
+
+document.querySelectorAll('.p-tab').forEach(tab => {
+  tab.addEventListener('click', async function () {
+    document.querySelectorAll('.p-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.p-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+    const t = tab.dataset.tab;
+    if (t === 'dashboard') await loadDashboard();
+    if (t === 'profile') await loadProfile();
+    if (t === 'applications') await loadApplications();
+    if (t === 'interviews') await loadInterviews();
+    if (t === 'documents') await loadDocuments();
+    if (t === 'alerts') await loadAlerts();
+  });
+});
+
+async function loadDashboard() {
+  try {
+    const data = await post("portalGetDashboard", {});
+    profile = data.profile || {};
+    renderStats(data.stats || {});
+    renderDashboardContent(data);
+  } catch (e) { showMsg(e.message); }
+}
+
+function renderStats(s) {
+  const el = document.getElementById('statsContainer');
+  el.innerHTML = [
+    { n: s.totalApplications || 0, l: "Applications" },
+    { n: s.activeApplications || 0, l: "Active" },
+    { n: s.upcomingInterviews || 0, l: "Upcoming Interviews" },
+    { n: s.offers || 0, l: "Offers" }
+  ].map(x => `<div class="p-stat"><div class="p-stat-num">${x.n}</div><div class="p-stat-lbl">${x.l}</div></div>`).join("");
+}
+
+function renderDashboardContent(data) {
+  const el = document.getElementById('dashboardContent');
+  const name = (data.profile && data.profile.name) || "there";
+  let html = `<div class="p-card"><h2>Welcome back, ${esc(name.split(' ')[0])} 👋</h2>
+    <p class="sub">Here's what's happening with your applications.</p></div>`;
+
+  if (data.upcomingInterviews && data.upcomingInterviews.length) {
+    html += `<div class="p-card"><h2>📅 Next Interview</h2>`;
+    data.upcomingInterviews.forEach(i => {
+      html += `<div class="p-int">
+        <strong>${esc(i.position)}</strong> @ ${esc(i.company)}
+        <div class="p-int-row">
+          <div class="p-int-cell"><strong>Date</strong>${esc(i.date)}</div>
+          <div class="p-int-cell"><strong>Time</strong>${esc(i.time)}</div>
+          <div class="p-int-cell"><strong>Mode</strong>${esc(i.mode)}</div>
+        </div>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  if (data.applications && data.applications.length) {
+    html += `<div class="p-card"><h2>Recent Applications</h2>`;
+    data.applications.forEach(a => { html += renderAppRow(a); });
+    html += `</div>`;
+  } else {
+    html += `<div class="p-card"><div class="p-empty">
+      <div class="p-empty-icon">🔍</div>
+      <p>You haven't applied to any roles yet.</p>
+      <a href="index.html#jobs" class="p-btn primary" style="display:inline-block;margin-top:12px;text-decoration:none">Browse Jobs</a>
+    </div></div>`;
+  }
+  el.innerHTML = html;
+}
+
+async function loadProfile() {
+  try {
+    const data = await post("portalGetProfile", {});
+    const p = data.profile || {};
+    profile = p;
+    ['name','phone','email','location','education','totalExp','relExp','noticePeriod',
+     'currentCtc','expectedCtc','currentCompany','currentDesignation','linkedin',
+     'languages','skills','reasonLeaving'].forEach(k => {
+      const el = document.getElementById('pf' + k.charAt(0).toUpperCase() + k.slice(1));
+      if (el) el.value = p[k] || '';
+    });
+    document.getElementById('currentEmailLabel').textContent = currentEmail;
+  } catch (e) { showMsg(e.message); }
+}
+
+async function saveProfile(ev) {
+  ev.preventDefault();
+  const btn = document.getElementById('saveProfileBtn');
+  btn.disabled = true; btn.textContent = "Saving...";
+  const fields = ['name','phone','location','education','totalExp','relExp','noticePeriod',
+    'currentCtc','expectedCtc','currentCompany','currentDesignation','linkedin',
+    'languages','skills','reasonLeaving'];
+  const profileData = {};
+  fields.forEach(k => {
+    const el = document.getElementById('pf' + k.charAt(0).toUpperCase() + k.slice(1));
+    if (el) profileData[k] = el.value.trim();
+  });
+  try {
+    const res = await post("portalUpdateProfile", { profile: profileData });
+    showMsg("✅ Profile updated on " + res.updated + " application(s).", "success");
+  } catch (e) { showMsg(e.message); }
+  finally { btn.disabled = false; btn.textContent = "Save Changes"; }
+}
+
+function openEmailChangeModal() {
+  document.getElementById('newEmailInput').value = "";
+  document.getElementById('emailOtpInput').value = "";
+  document.getElementById('emailOtpField').style.display = "none";
+  document.getElementById('emailChangeMsg').className = "p-msg";
+  document.getElementById('emailChangeBtn').textContent = "Send Code";
+  document.getElementById('emailChangeBtn').onclick = sendEmailChangeOTP;
+  openModal('emailChangeModal');
+}
+
+async function sendEmailChangeOTP() {
+  const newEmail = document.getElementById('newEmailInput').value.trim().toLowerCase();
+  const msg = document.getElementById('emailChangeMsg');
+  msg.className = "p-msg";
+  if (!newEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail)) {
+    msg.className = "p-msg error"; msg.textContent = "Enter a valid email."; return;
+  }
+  const btn = document.getElementById('emailChangeBtn');
+  btn.disabled = true; btn.textContent = "Sending...";
+  try {
+    await post("portalRequestEmailChange", { newEmail });
+    document.getElementById('emailOtpField').style.display = "block";
+    msg.className = "p-msg success";
+    msg.textContent = "Code sent to " + newEmail + ". Check your inbox.";
+    btn.textContent = "Verify & Change";
+    btn.onclick = verifyEmailChange;
+    document.getElementById('emailOtpInput').focus();
+  } catch (e) {
+    msg.className = "p-msg error"; msg.textContent = e.message;
+    btn.textContent = "Send Code";
+  }
+  btn.disabled = false;
+}
+
+async function verifyEmailChange() {
+  const otp = document.getElementById('emailOtpInput').value.trim();
+  const msg = document.getElementById('emailChangeMsg');
+  if (!/^\d{6}$/.test(otp)) { msg.className = "p-msg error"; msg.textContent = "Enter the 6-digit code."; return; }
+  const btn = document.getElementById('emailChangeBtn');
+  btn.disabled = true; btn.textContent = "Verifying...";
+  try {
+    const res = await post("portalVerifyEmailChange", { otp });
+    msg.className = "p-msg success";
+    msg.textContent = "Email changed to " + res.email + ". Please log in again.";
+    localStorage.removeItem(TOKEN_KEY);
+    setTimeout(() => { window.location.href = "portal-login.html"; }, 2000);
+  } catch (e) {
+    msg.className = "p-msg error"; msg.textContent = e.message;
+    btn.disabled = false; btn.textContent = "Verify & Change";
+  }
+}
+
+async function loadApplications() {
+  const el = document.getElementById('applicationsList');
+  el.innerHTML = '<div class="p-empty">Loading…</div>';
+  try {
+    const data = await post("portalGetApplications", {});
+    if (!data.applications.length) {
+      el.innerHTML = `<div class="p-empty"><div class="p-empty-icon">📋</div><p>No applications yet.</p>
+        <a href="index.html#jobs" class="p-btn primary" style="display:inline-block;margin-top:12px;text-decoration:none">Browse Jobs</a></div>`;
+      return;
+    }
+    el.innerHTML = data.applications.map(renderAppRow).join("");
+  } catch (e) { el.innerHTML = `<div class="p-empty">${esc(e.message)}</div>`; }
+}
+
+function renderAppRow(a) {
+  const chipClass = statusChipClass(a.status);
+  const withdrawBtn = !a.isClosed && a.status !== "Withdrawn" && a.status !== "Submitted to Client"
+    ? `<button class="p-btn danger p-btn-sm" onclick="withdrawApp('${esc(a.appId)}')">Withdraw</button>` : "";
+  return `<div class="p-app">
+    <div>
+      <p class="p-app-title">${esc(a.jobTitle || "—")}</p>
+      <p class="p-app-meta">${esc(a.company || "")} · ${esc(a.location || "")} · Applied ${esc(a.appliedAt)}</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <span class="p-chip ${chipClass}">${esc(a.status || "New")}</span>
+      ${withdrawBtn}
+    </div>
+  </div>`;
+}
+
+function statusChipClass(status) {
+  const s = (status || "").toLowerCase();
+  if (s.indexOf("interview") !== -1) return "interview";
+  if (s.indexOf("offer") !== -1 || s === "hired") return "offer";
+  if (s.indexOf("reject") !== -1 || s === "withdrawn") return "rejected";
+  if (s.indexOf("submit") !== -1) return "submitted";
+  if (s === "sourced" || s === "jd shared" || s === "shortlisted") return "sourced";
+  return "closed";
+}
+
+async function withdrawApp(appId) {
+  if (!confirm("Withdraw this application?")) return;
+  try {
+    await post("portalWithdraw", { appId });
+    showMsg("Application withdrawn.", "success");
+    await loadApplications();
+  } catch (e) { showMsg(e.message); }
+}
+
+async function loadInterviews() {
+  try {
+    const data = await post("portalGetInterviews", {});
+    const slotsData = await post("portalGetInterviewSlots", {});
+    slotsByInterview = slotsData.slotsByInterview || {};
+
+    const upEl = document.getElementById('upcomingInterviews');
+    const pastEl = document.getElementById('pastInterviews');
+
+    upEl.innerHTML = !data.upcoming.length
+      ? `<div class="p-empty"><div class="p-empty-icon">📅</div><p>No upcoming interviews.</p></div>`
+      : data.upcoming.map(renderInterview).join("");
+
+    pastEl.innerHTML = !data.past.length
+      ? `<div class="p-empty"><p>No past interviews.</p></div>`
+      : data.past.map(renderInterview).join("");
+  } catch (e) { showMsg(e.message); }
+}
+
+function renderInterview(i) {
+  const slots = slotsByInterview[i.interviewId] || [];
+  const hasSlotPicker = slots.length > 0 && slots.some(s => s.status === "Proposed");
+  const selectedSlot = slots.find(s => s.status === "Selected");
+  const awaitingResponse = !i.candidateResponse || i.candidateResponse === "Slot Pending";
+
+  const responseChip = i.candidateResponse
+    ? `<span class="p-chip ${i.candidateResponse === "Confirmed" || i.candidateResponse === "Confirmed (Original Kept)" ? "offer" : i.candidateResponse === "Cancelled" ? "rejected" : "interview"}">${esc(i.candidateResponse)}</span>`
+    : `<span class="p-chip submitted">Awaiting your response</span>`;
+
+  let slotsHtml = "";
+  if (hasSlotPicker) {
+    slotsHtml = `<div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;padding:14px;margin:12px 0">
+      <div style="font-weight:800;color:#92400E;margin-bottom:8px;font-size:13px">📅 Pick a slot</div>
+      <div class="slot-list">
+        ${slots.filter(s => s.status === "Proposed").map(s => `
+          <label class="slot-option" onclick="selectSlot('${esc(s.slotId)}')">
+            <input type="radio" name="slot_${esc(i.interviewId)}">
+            <div>
+              <div class="slot-when">${esc(fmtLocal(s.datetime))}</div>
+              <div class="slot-meta">${esc(s.mode)} · ${s.durationMins} mins</div>
+            </div>
+            <span class="slot-badge">Pick me</span>
+          </label>`).join("")}
+      </div>
+    </div>`;
+  } else if (selectedSlot) {
+    slotsHtml = `<div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:12px;margin:12px 0;font-size:12.5px;color:#166534">
+      ✅ You selected: <b>${esc(fmtLocal(selectedSlot.datetime))}</b>
+    </div>`;
+  }
+
+  const actions = i.isUpcoming && !hasSlotPicker ? `
+    <div style="display:flex;gap:6px;margin-top:12px;flex-wrap:wrap">
+      ${awaitingResponse ? `<button class="p-btn primary p-btn-sm" onclick="respond('${esc(i.interviewId)}','Confirmed')">Confirm</button>` : ""}
+      <button class="p-btn ghost p-btn-sm" onclick="openReschedule('${esc(i.interviewId)}')">Request Reschedule</button>
+      <button class="p-btn danger p-btn-sm" onclick="respond('${esc(i.interviewId)}','Cancelled')">Cancel</button>
+    </div>` : "";
+
+  return `<div class="p-int">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">
+      <div>
+        <strong style="font-size:15px">${esc(i.position || "Interview")}</strong>
+        <div style="font-size:12px;color:#64748B;margin-top:2px">${esc(i.company || "")}</div>
+      </div>
+      ${responseChip}
+    </div>
+    <div class="p-int-row">
+      <div class="p-int-cell"><strong>Date</strong>${esc(i.date)}</div>
+      <div class="p-int-cell"><strong>Time</strong>${esc(i.time)}</div>
+      <div class="p-int-cell"><strong>Mode</strong>${esc(i.mode)}</div>
+    </div>
+    ${slotsHtml}
+    ${actions}
+  </div>`;
+}
+
+async function selectSlot(slotId) {
+  if (!confirm("Confirm this interview slot?")) return;
+  try {
+    const res = await post("portalSelectInterviewSlot", { slotId });
+    showMsg("✅ " + res.message, "success");
+    await loadInterviews();
+  } catch (e) { showMsg(e.message); }
+}
+
+function openReschedule(interviewId) {
+  document.getElementById('rescheduleInterviewId').value = interviewId;
+  ['reslot1','reslot2','reslot3','reslotNote'].forEach(id => document.getElementById(id).value = "");
+  document.getElementById('rescheduleMsg').className = "p-msg";
+  openModal('rescheduleModal');
+}
+
+async function submitReschedule() {
+  const interviewId = document.getElementById('rescheduleInterviewId').value;
+  const proposals = [];
+  [1,2,3].forEach(n => {
+    const v = document.getElementById('reslot' + n).value;
+    if (v) proposals.push(v + ":00");
+  });
+  const note = document.getElementById('reslotNote').value.trim();
+  const msg = document.getElementById('rescheduleMsg');
+  if (proposals.length < 1) { msg.className = "p-msg error"; msg.textContent = "Propose at least one datetime."; return; }
+  const btn = document.getElementById('rescheduleBtn');
+  btn.disabled = true; btn.textContent = "Sending...";
+  try {
+    await post("portalRequestReschedule", { interviewId, proposals, note });
+    showMsg("✅ Reschedule request sent.", "success");
+    closeModal('rescheduleModal');
+    await loadInterviews();
+  } catch (e) {
+    msg.className = "p-msg error"; msg.textContent = e.message;
+  }
+  btn.disabled = false; btn.textContent = "Send Request";
+}
+
+async function respond(interviewId, response) {
+  if (response === "Cancelled" && !confirm("Cancel this interview?")) return;
+  try {
+    await post("portalRespondInterview", { interviewId, response });
+    showMsg("Response recorded: " + response, "success");
+    await loadInterviews();
+  } catch (e) { showMsg(e.message); }
+}
+
+async function loadDocuments() {
+  try {
+    const data = await post("portalGetDocuments", {});
+    const sel = document.getElementById('docType');
+    if (!sel.options.length) {
+      sel.innerHTML = (data.types || []).map(t => `<option>${esc(t)}</option>`).join("");
+    }
+    const list = document.getElementById('documentsList');
+    list.innerHTML = !data.documents.length
+      ? `<div class="p-empty"><div class="p-empty-icon">📄</div><p>No documents uploaded yet.</p></div>`
+      : data.documents.map(d => `
+        <div class="p-doc">
+          <div>
+            <div class="p-doc-name">${esc(d.docName)}</div>
+            <div class="p-doc-meta">${esc(d.docType)} · ${esc(d.uploadedAt)}</div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <a href="${esc(d.url)}" target="_blank" class="p-btn ghost p-btn-sm" style="text-decoration:none">View</a>
+            <button class="p-btn danger p-btn-sm" onclick="deleteDoc('${esc(d.docId)}')">Delete</button>
+          </div>
+        </div>`).join("");
+  } catch (e) { showMsg(e.message); }
+}
+
+async function uploadDoc() {
+  const docType = document.getElementById('docType').value;
+  const fileInput = document.getElementById('docFile');
+  if (!fileInput.files || !fileInput.files.length) return showMsg("Please choose a file.");
+  const file = fileInput.files[0];
+  if (file.size > 10 * 1024 * 1024) return showMsg("File must be under 10 MB.");
+  const btn = document.getElementById('uploadBtn');
+  btn.disabled = true; btn.textContent = "Uploading...";
+  const reader = new FileReader();
+  reader.onload = async function (ev) {
+    try {
+      await post("portalUploadDocument", { docType, fileName: file.name, fileData: ev.target.result });
+      showMsg("✅ Uploaded.", "success");
+      fileInput.value = "";
+      await loadDocuments();
+    } catch (e) { showMsg(e.message); }
+    finally { btn.disabled = false; btn.textContent = "Upload"; }
+  };
+  reader.readAsDataURL(file);
+}
+
+async function deleteDoc(docId) {
+  if (!confirm("Delete this document?")) return;
+  try {
+    await post("portalDeleteDocument", { docId });
+    showMsg("Deleted.", "success");
+    await loadDocuments();
+  } catch (e) { showMsg(e.message); }
+}
+
+async function loadAlerts() {
+  try {
+    const data = await post("portalGetAlertPrefs", {});
+    document.getElementById('alertEnabled').checked = !!data.enabled;
+    document.getElementById('alertKeywords').value = data.keywords || "";
+    document.getElementById('alertLocations').value = data.locations || "";
+    document.getElementById('alertLastSent').textContent =
+      data.lastSent ? "Last digest sent: " + data.lastSent : "No digests sent yet.";
+  } catch (e) { showMsg(e.message); }
+}
+
+async function saveAlerts(ev) {
+  ev.preventDefault();
+  const btn = document.getElementById('saveAlertsBtn');
+  btn.disabled = true; btn.textContent = "Saving...";
+  try {
+    await post("portalUpdateAlertPrefs", {
+      enabled: document.getElementById('alertEnabled').checked,
+      keywords: document.getElementById('alertKeywords').value.trim(),
+      locations: document.getElementById('alertLocations').value.trim()
+    });
+    showMsg("✅ Alert preferences saved.", "success");
+  } catch (e) { showMsg(e.message); }
+  finally { btn.disabled = false; btn.textContent = "Save Preferences"; }
+}
+
+async function logout() {
+  try { await post("portalLogout", {}); } catch (e) {}
+  localStorage.removeItem(TOKEN_KEY);
+  window.location.href = "portal-login.html";
+}
+
+document.getElementById('emailOtpInput')?.addEventListener('keydown', e => { if (e.key === 'Enter') verifyEmailChange(); });
+</script>
+</body>
+</html>
