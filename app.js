@@ -1,7 +1,7 @@
 /* ==========================================================================
    RAVEONE CAREERS — app.js v2 (UI/UX improvements)
    ========================================================================== */
-const API_URL = "https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzSX8aT_Vecff3ZJinj0wt-DU72NH9jmerdyN7DywmGlX401jssm87ZHS6QUnP8qG0y/exec";
 const SITE = { brand: "Raveone Careers", portal: "https://www.raveone.in", phone: "9148330565", email: "rajesh@raveone.in" };
 const STORAGE_KEYS = { savedJobs: "raveone_saved_jobs_v1", recent: "raveone_recent_jobs_v1", drafts: "raveone_drafts_v1" };
 const PAGE_SIZE = 10;
