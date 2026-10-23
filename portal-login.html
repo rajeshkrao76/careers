@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Candidate Login — Raveone Careers</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { margin: 0; font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #0F172A 0%, #1A365D 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; box-sizing: border-box; }
+    .login-wrap { width: 100%; max-width: 440px; }
+    .login-card { background: #fff; border-radius: 20px; box-shadow: 0 30px 80px -20px rgba(0,0,0,.4); overflow: hidden; }
+    .login-head { background: linear-gradient(135deg, #1A365D 0%, #2A5487 100%); color: #fff; padding: 36px 28px 32px; text-align: center; }
+    .login-head h1 { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.3px; }
+    .login-head p { margin: 8px 0 0 0; font-size: 13px; color: #CBD5E1; }
+    .login-body { padding: 28px; }
+    .login-body label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; color: #475569; margin-bottom: 6px; }
+    .login-body input { width: 100%; padding: 13px 14px; font-size: 14px; border: 1.5px solid #E2E8F0; border-radius: 10px; outline: none; transition: all .15s ease; box-sizing: border-box; font-family: inherit; }
+    .login-body input:focus { border-color: #3B82F6; box-shadow: 0 0 0 4px rgba(59,130,246,.15); }
+    .login-body .field { margin-bottom: 16px; }
+    .otp-input { text-align: center; font-size: 24px !important; font-weight: 800; letter-spacing: 10px; padding: 16px !important; font-family: 'Courier New', monospace; }
+    .btn-primary-lg { width: 100%; padding: 14px; font-size: 14px; font-weight: 800; color: #fff; background: linear-gradient(135deg, #1A365D 0%, #2A5487 100%); border-radius: 10px; border: none; cursor: pointer; transition: all .2s ease; font-family: inherit; letter-spacing: .3px; }
+    .btn-primary-lg:hover:not(:disabled) { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 10px 20px -8px rgba(26,54,93,.5); }
+    .btn-primary-lg:disabled { opacity: .6; cursor: not-allowed; }
+    .msg { font-size: 12.5px; font-weight: 600; padding: 10px 14px; border-radius: 8px; margin-bottom: 16px; display: none; }
+    .msg.error { background: #FEE2E2; color: #B91C1C; display: block; }
+    .msg.success { background: #DCFCE7; color: #15803D; display: block; }
+    .step { display: none; }
+    .step.active { display: block; }
+    .hint { font-size: 12px; color: #64748B; text-align: center; margin-top: 14px; line-height: 1.5; }
+    .resend-link { display: block; text-align: center; font-size: 12px; color: #64748B; margin-top: 12px; cursor: pointer; }
+    .resend-link:hover { color: #2A5487; text-decoration: underline; }
+    .back-link { display: inline-block; font-size: 12px; color: #64748B; margin-bottom: 12px; cursor: pointer; }
+    .back-link:hover { color: #1A365D; }
+  </style>
+</head>
+<body>
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="login-head">
+        <h1>Candidate Portal</h1>
+        <p>Raveone Consultants</p>
+      </div>
+      <div class="login-body">
+
+        <div class="msg" id="msg"></div>
+
+        <div class="step active" id="stepEmail">
+          <div class="field">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" placeholder="you@example.com" autocomplete="email">
+          </div>
+          <button class="btn-primary-lg" id="sendOtpBtn" onclick="requestOTP()">Send Login Code</button>
+          <p class="hint">New here? Just enter your email — we'll create your account automatically.</p>
+        </div>
+
+        <div class="step" id="stepOtp">
+          <span class="back-link" onclick="showStep('stepEmail')">← Change email</span>
+          <div class="field">
+            <label for="otp">6-Digit Code</label>
+            <input type="tel" id="otp" class="otp-input" maxlength="6" inputmode="numeric" placeholder="000000" autocomplete="one-time-code">
+          </div>
+          <button class="btn-primary-lg" id="verifyBtn" onclick="verifyOTP()">Verify &amp; Sign In</button>
+          <span class="resend-link" id="resendLink" onclick="requestOTP(true)">Resend code</span>
+        </div>
+
+      </div>
+    </div>
+    <p style="text-align:center;font-size:11.5px;color:#94A3B8;margin-top:18px">© Raveone Consultants · <a href="https://www.raveone.in" style="color:#CBD5E1">www.raveone.in</a></p>
+  </div>
+
+  <script src="app.js" defer></script>
+  <script>
+    const TOKEN_KEY = "raveone_portal_token";
+    let currentEmail = "";
+
+    function apiURL() { return window.RAVEONE_API_URL || window.API_URL || ""; }
+
+    function showStep(id) {
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      hideMsg();
+    }
+
+    function showMsg(text, type) {
+      const el = document.getElementById('msg');
+      el.className = 'msg ' + (type || 'error');
+      el.textContent = text;
+    }
+    function hideMsg() { document.getElementById('msg').className = 'msg'; }
+
+    async function post(action, body) {
+      const url = apiURL();
+      if (!url) throw new Error("API_URL not configured.");
+      const res = await fetch(url, {
+        method: "POST",
+        body: JSON.stringify(Object.assign({ action }, body || {})),
+        headers: { "Content-Type": "text/plain;charset=utf-8" }
+      });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error || "Request failed.");
+      return data;
+    }
+
+    async function requestOTP(isResend) {
+      hideMsg();
+      const email = document.getElementById('email').value.trim().toLowerCase();
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showMsg("Please enter a valid email.");
+      currentEmail = email;
+      const btn = document.getElementById('sendOtpBtn');
+      const resend = document.getElementById('resendLink');
+      if (btn) { btn.disabled = true; btn.textContent = "Sending..."; }
+      if (resend) resend.style.pointerEvents = "none";
+      try {
+        await post("portalRequestOTP", { email });
+        showStep('stepOtp');
+        showMsg("Code sent to " + email + ". Check your inbox (and spam).", "success");
+        document.getElementById('otp').focus();
+        setTimeout(() => { if (resend) resend.style.pointerEvents = "auto"; }, 60000);
+      } catch (e) { showMsg(e.message); }
+      finally { if (btn) { btn.disabled = false; btn.textContent = "Send Login Code"; } }
+    }
+
+    async function verifyOTP() {
+      hideMsg();
+      const otp = document.getElementById('otp').value.trim();
+      if (!/^\d{6}$/.test(otp)) return showMsg("Enter the 6-digit code.");
+      const btn = document.getElementById('verifyBtn');
+      btn.disabled = true; btn.textContent = "Verifying...";
+      try {
+        const result = await post("portalVerifyOTP", { email: currentEmail, otp, userAgent: navigator.userAgent });
+        localStorage.setItem(TOKEN_KEY, result.token);
+        window.location.href = "portal.html";
+      } catch (e) {
+        showMsg(e.message);
+        btn.disabled = false; btn.textContent = "Verify & Sign In";
+      }
+    }
+
+    document.getElementById('otp')?.addEventListener('keydown', e => { if (e.key === 'Enter') verifyOTP(); });
+    document.getElementById('email')?.addEventListener('keydown', e => { if (e.key === 'Enter') requestOTP(); });
+
+    // Pre-fill from ?email=
+    document.addEventListener('DOMContentLoaded', function () {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const preEmail = params.get('email');
+        if (preEmail) document.getElementById('email').value = preEmail;
+      } catch (e) {}
+    });
+  </script>
+</body>
+</html>
